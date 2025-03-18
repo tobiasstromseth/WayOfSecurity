@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Magnifying Glass Handle -->
+  <path d="M65 65 L85 85" stroke="#2563EB" stroke-width="8" stroke-linecap="round" />
+  
+  <!-- Magnifying Glass Circle -->
+  <circle cx="45" cy="45" r="25" fill="none" stroke="#2563EB" stroke-width="6" />
+  
+  <!-- Checkmark inside -->
+  <path d="M35 45 L42 52 L55 38" fill="none" stroke="#2563EB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

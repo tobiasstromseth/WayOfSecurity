@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Shield Base -->
+  <path d="M100 20 L40 50 V110 C40 150 100 180 100 180 C100 180 160 150 160 110 V50 Z" 
+        fill="#2563EB" stroke="#1E40AF" stroke-width="4"/>
+  
+  <!-- Lock Symbol -->
+  <rect x="80" y="90" width="40" height="35" rx="4" ry="4" 
+        fill="#FFFFFF" stroke="#1E40AF" stroke-width="2"/>
+  
+  <!-- Lock Body -->
+  <rect x="87.5" y="65" width="25" height="40" rx="12.5" ry="12.5" 
+        fill="none" stroke="#FFFFFF" stroke-width="6"/>
+  
+  <!-- Shield Inner Highlight -->
+  <path d="M100 30 L50 55 V110 C50 142 100 165 100 165" 
+        fill="none" stroke="#60A5FA" stroke-width="3" stroke-opacity="0.5"/>
+</svg>

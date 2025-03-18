@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Envelope -->
+  <rect x="15" y="25" width="70" height="50" rx="4" ry="4" fill="none" stroke="#2563EB" stroke-width="4" />
+  
+  <!-- Envelope Top Flap -->
+  <path d="M15 25 L50 50 L85 25" fill="none" stroke="#2563EB" stroke-width="4" />
+  
+  <!-- Warning Sign -->
+  <circle cx="50" cy="55" r="12" fill="#EF4444" />
+  <path d="M50 48 L50 58" stroke="white" stroke-width="3" stroke-linecap="round" />
+  <circle cx="50" cy="62" r="1.5" fill="white" />
+</svg>

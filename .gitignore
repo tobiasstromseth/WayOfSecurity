@@ -1,3 +1,5 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # dependencies
 /node_modules
 /.pnp
@@ -16,43 +18,6 @@
 .env.test.local
 .env.production.local
 
-# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-logs
-*.log
-
-# Editor directories and files
-.idea/
-.vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Optional: environment variables file
-.env
-
-# Optional: TypeScript cache
-*.tsbuildinfo
-
-# Optional: Cache directories
-.npm
-.eslintcache
-.cache/
-
-# Optional: Local history for Visual Studio Code
-.history/
-
-# Optional: MacOS files
-.AppleDouble
-.LSOverride
-Icon
-._*
-
-# Optional: Windows files
-Thumbs.db
-ehthumbs.db
-Desktop.ini

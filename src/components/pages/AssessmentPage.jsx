@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { AssessmentContext } from '../../context/AssessmentContext';
 import { categories } from '../../data/categories';
 import CategoryCard from '../common/CategoryCard';
@@ -91,6 +91,7 @@ const AssessmentPage = () => {
   } = useContext(AssessmentContext);
   
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const modalRef = useRef(null);
   const navigate = useNavigate();
   
   const handleCategoryClick = (categoryId) => {
@@ -104,6 +105,25 @@ const AssessmentPage = () => {
   const handleNext = () => {
     navigate('/results');
   };
+  
+  // Render the modal independently from main component
+  useEffect(() => {
+    // We create and attach/remove the modal element outside the normal component cycle
+    if (selectedCategory) {
+      if (!modalRef.current) {
+        modalRef.current = document.createElement('div');
+        modalRef.current.id = 'category-modal-container';
+        document.body.appendChild(modalRef.current);
+      }
+    } else {
+      if (modalRef.current) {
+        if (document.body.contains(modalRef.current)) {
+          document.body.removeChild(modalRef.current);
+        }
+        modalRef.current = null;
+      }
+    }
+  }, [selectedCategory]);
   
   // Calculate progress
   const progress = Math.round((completedCategories.length / categories.length) * 100);
@@ -148,14 +168,14 @@ const AssessmentPage = () => {
         </ActionButton>
       </ButtonContainer>
       
-      <AnimatePresence>
-        {selectedCategory && (
-          <CategoryDetail 
-            categoryId={selectedCategory}
-            onClose={handleCloseDetail}
-          />
-        )}
-      </AnimatePresence>
+      {/* Render CategoryDetail if there is a selectedCategory */}
+      {selectedCategory && (
+        <CategoryDetail 
+          categoryId={selectedCategory}
+          onClose={handleCloseDetail}
+          standalone={true}
+        />
+      )}
     </PageContainer>
   );
 };

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { categories } from '../data/categories';
 import { questions } from '../data/questions';
 
@@ -56,17 +56,26 @@ export const AssessmentProvider = ({ children }) => {
     setCompletedCategories(completed);
   }, [answers]);
 
-  const updateAnswer = (categoryId, questionId, value) => {
-    setAnswers(prev => ({
-      ...prev,
-      [categoryId]: {
-        ...prev[categoryId],
-        [questionId]: value
+  // Memoize the updateAnswer function to prevent unnecessary re-renders
+  const updateAnswer = useCallback((categoryId, questionId, value) => {
+    setAnswers(prev => {
+      // If value is the same, don't update
+      if (prev[categoryId]?.[questionId] === value) {
+        return prev;
       }
-    }));
-  };
+      
+      return {
+        ...prev,
+        [categoryId]: {
+          ...prev[categoryId],
+          [questionId]: value
+        }
+      };
+    });
+  }, []);
 
-  const getCategoryStatus = (categoryId) => {
+  // Memoize the getCategoryStatus function
+  const getCategoryStatus = useCallback((categoryId) => {
     const categoryQuestions = questions.filter(q => q.categoryId === categoryId);
     const answeredQuestions = categoryQuestions.filter(
       question => answers[categoryId]?.[question.id] !== null
@@ -81,11 +90,11 @@ export const AssessmentProvider = ({ children }) => {
       answered: answeredQuestions.length,
       fulfilled: fulfilledQuestions.length
     };
-  };
+  }, [answers]);
 
-  const isAssessmentComplete = () => {
+  const isAssessmentComplete = useCallback(() => {
     return completedCategories.length === categories.length;
-  };
+  }, [completedCategories]);
 
   const value = {
     answers,

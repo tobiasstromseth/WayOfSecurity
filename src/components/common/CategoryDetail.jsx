@@ -1,15 +1,18 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect, memo } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { AssessmentContext } from '../../context/AssessmentContext';
 import { questions } from '../../data/questions';
 import { categories } from '../../data/categories';
 import Question from './Question';
+import ModalPortal from './ModalPortal';
 
 const Overlay = styled(motion.div)`
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
@@ -17,6 +20,10 @@ const Overlay = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: auto;
 `;
 
 const DetailContainer = styled(motion.div)`
@@ -32,6 +39,8 @@ const DetailContainer = styled(motion.div)`
   flex-direction: column;
   z-index: 10000;
   overflow: hidden;
+  position: relative;
+  margin: 0 auto; /* Ensure horizontal centering */
   
   @media (max-width: 768px) {
     width: 95%;
@@ -125,59 +134,83 @@ const ActionButton = styled.button`
   }
 `;
 
-const CategoryDetail = ({ categoryId, onClose }) => {
+const CategoryDetail = memo(({ categoryId, onClose, standalone = false }) => {
   const { updateAnswer, answers, getCategoryStatus } = useContext(AssessmentContext);
+  const [internalState, setInternalState] = useState({});
   
   const category = categories.find(c => c.id === categoryId);
   const categoryQuestions = questions.filter(q => q.categoryId === categoryId);
   const status = getCategoryStatus(categoryId);
   
+  // Initialize internal state from context
+  useEffect(() => {
+    if (categoryId && answers[categoryId]) {
+      setInternalState(answers[categoryId]);
+    }
+  }, [categoryId, answers]);
+  
   const handleAnswerChange = (questionId, value) => {
+    // First update internal state to prevent flicker
+    setInternalState(prev => ({
+      ...prev,
+      [questionId]: value
+    }));
+    
+    // Then update the context state
     updateAnswer(categoryId, questionId, value);
+  };
+  
+  const handleStopPropagation = (e) => {
+    if (e) e.stopPropagation();
   };
   
   if (!category) return null;
   
   return (
-    <Overlay 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={onClose}
-    >
-      <DetailContainer
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 20 }}
-        transition={{ duration: 0.3 }}
-        onClick={(e) => e.stopPropagation()}
+    <ModalPortal>
+      <Overlay 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
       >
-        <DetailHeader>
-          <Title>{category.name}</Title>
-          <CloseButton onClick={onClose}>×</CloseButton>
-        </DetailHeader>
-        
-        <QuestionsContainer>
-          <QuestionsHeader>
-            Spørsmål ({status.answered} av {status.total} besvart)
-          </QuestionsHeader>
+        <DetailContainer
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.3 }}
+          onClick={handleStopPropagation}
+        >
+          <DetailHeader>
+            <Title>{category.name}</Title>
+            <CloseButton onClick={onClose}>×</CloseButton>
+          </DetailHeader>
           
-          {categoryQuestions.map(question => (
-            <Question
-              key={question.id}
-              question={question}
-              answer={answers[categoryId]?.[question.id]}
-              onChange={(value) => handleAnswerChange(question.id, value)}
-            />
-          ))}
-        </QuestionsContainer>
-        
-        <CloseButtonContainer>
-          <ActionButton onClick={onClose}>Lukk kategori</ActionButton>
-        </CloseButtonContainer>
-      </DetailContainer>
-    </Overlay>
+          <QuestionsContainer>
+            <QuestionsHeader>
+              Spørsmål ({status.answered} av {status.total} besvart)
+            </QuestionsHeader>
+            
+            {categoryQuestions.map(question => (
+              <Question
+                key={question.id}
+                question={question}
+                // Use internal state first, fall back to context state
+                answer={internalState[question.id] !== undefined ? 
+                  internalState[question.id] : 
+                  answers[categoryId]?.[question.id]}
+                onChange={(value) => handleAnswerChange(question.id, value)}
+              />
+            ))}
+          </QuestionsContainer>
+          
+          <CloseButtonContainer>
+            <ActionButton onClick={onClose}>Lukk kategori</ActionButton>
+          </CloseButtonContainer>
+        </DetailContainer>
+      </Overlay>
+    </ModalPortal>
   );
-};
+});
 
 export default CategoryDetail;

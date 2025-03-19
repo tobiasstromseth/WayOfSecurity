@@ -244,7 +244,7 @@ const ResultsPage = () => {
         </FlippedContent>
       </FlipContainer>
       
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {selectedCategory && (
           <RecommendationDetail 
             categoryId={selectedCategory}

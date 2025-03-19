@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import styled from 'styled-components';
 
 const QuestionContainer = styled.div`
@@ -106,19 +106,29 @@ const InfoText = styled.div`
   color: #333;
 `;
 
-const Question = ({ question, answer, onChange }) => {
+const Question = memo(({ question, answer, onChange }) => {
   const [showInfo, setShowInfo] = useState(false);
   
-  const handleOptionClick = (value) => {
+  const handleOptionClick = (value, e) => {
+    // Prevent event from bubbling up to parent containers
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     onChange(value);
   };
   
-  const toggleInfo = () => {
+  const toggleInfo = (e) => {
+    // Prevent event from bubbling up to parent containers
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     setShowInfo(prev => !prev);
   };
   
   return (
-    <QuestionContainer>
+    <QuestionContainer onClick={(e) => e.stopPropagation()}>
       <QuestionText>{question.text}</QuestionText>
       <Standard>Standard: {question.standard}</Standard>
       
@@ -126,14 +136,14 @@ const Question = ({ question, answer, onChange }) => {
         <Option 
           selected={answer === true} 
           value={true}
-          onClick={() => handleOptionClick(true)}
+          onClick={(e) => handleOptionClick(true, e)}
         >
           JA
         </Option>
         <Option 
           selected={answer === false} 
           value={false}
-          onClick={() => handleOptionClick(false)}
+          onClick={(e) => handleOptionClick(false, e)}
         >
           NEI
         </Option>
@@ -151,6 +161,6 @@ const Question = ({ question, answer, onChange }) => {
       )}
     </QuestionContainer>
   );
-};
+});
 
 export default Question;

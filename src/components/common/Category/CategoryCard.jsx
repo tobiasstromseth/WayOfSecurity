@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { categoryIcons } from '../../data/categories';
-import { AssessmentContext } from '../../context/AssessmentContext';
+import { categoryIcons } from '../../../data/categories';
+import { AssessmentContext } from '../../../context/AssessmentContext';
 
 const Card = styled.div`
   background-color: ${props => props.isActive ? props.color : props.isCompleted ? '#e8f5e9' : '#fff9c4'};

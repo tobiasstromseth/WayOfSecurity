@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect, memo } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { AssessmentContext } from '../../context/AssessmentContext';
-import { questions } from '../../data/questions';
-import { categories } from '../../data/categories';
-import Question from './Question';
-import ModalPortal from './ModalPortal';
+import { AssessmentContext } from '../../../context/AssessmentContext';
+import { questions } from '../../../data/questions';
+import { categories } from '../../../data/categories';
+import Question from '../Question';
+import ModalPortal from '../ModalPortal';
 
 const Overlay = styled(motion.div)`
   position: fixed;

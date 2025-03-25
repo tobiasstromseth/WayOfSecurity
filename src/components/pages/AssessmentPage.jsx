@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { AssessmentContext } from '../../context/AssessmentContext';
 import { categories } from '../../data/categories';
-import CategoryCard from '../common/CategoryCard';
-import CategoryDetail from '../common/CategoryDetail';
+import CategoryCard from '../common/Category/CategoryCard';
+import CategoryDetail from '../common/Category/CategoryDetail';
 
 const PageContainer = styled.div`
   max-width: 1200px;

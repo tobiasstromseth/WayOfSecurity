@@ -105,7 +105,7 @@ const ButtonContainer = styled.div`
 `;
 
 const ActionButton = styled.button`
-  background-color: ${props => props.primary ? '#28604B' : '#f0f0f0'};
+  background-color: ${props => props.primary ? props.theme.brand.main : '#f0f0f0'};
   color: ${props => props.primary ? 'white' : '#333'};
   border: none;
   padding: 0.75rem 2rem;
@@ -117,7 +117,7 @@ const ActionButton = styled.button`
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   
   &:hover {
-    background-color: ${props => props.primary ? '#1e4d3b' : '#e0e0e0'};
+    background-color: ${props => props.primary ? props.theme.brand.dark : '#e0e0e0'};
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   }

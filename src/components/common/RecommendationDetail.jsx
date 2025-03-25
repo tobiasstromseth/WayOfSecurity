@@ -125,9 +125,9 @@ const ScoreFill = styled.div`
   height: 100%;
   width: ${props => (props.fulfilled / props.total) * 100}%;
   background-color: ${props => {
-    if (props.fulfilled === props.total) return '#4CAF50';
-    if (props.fulfilled > 0) return '#FFC107';
-    return '#F44336';
+    if (props.fulfilled === props.total) return props.theme.status.successFill;
+    if (props.fulfilled > 0) return props.theme.status.warningFill;
+    return props.theme.status.errorFill;
   }};
 `;
 

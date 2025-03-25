@@ -73,9 +73,9 @@ const Grid = styled.div`
 
 const ResultsCard = styled.div`
   background-color: ${props => {
-    if (props.fulfilled === props.total) return 'props.theme.status.success';
-    if (props.fulfilled > 0) return 'props.theme.status.warning';
-    return 'props.theme.status.error';
+    if (props.fulfilled === props.total) return props.theme.status.success;
+    if (props.fulfilled > 0) return props.theme.status.warning;
+    return props.theme.status.error;
   }};
   border-radius: 8px;
   padding: 1.5rem;
@@ -117,9 +117,9 @@ const ScoreFill = styled.div`
   height: 100%;
   width: ${props => (props.fulfilled / props.total) * 100}%;
   background-color: ${props => {
-    if (props.fulfilled === props.total) return '#4CAF50';
-    if (props.fulfilled > 0) return '#FFC107';
-    return '#F44336';
+    if (props.fulfilled === props.total) return props.theme.status.successFill;
+    if (props.fulfilled > 0) return props.theme.status.warningFill;
+    return props.theme.status.errorFill;
   }};
 `;
 

@@ -1,13 +1,13 @@
 export const theme = {
-    // Brand farger - oppdatert for å inkludere de gjennomgående mørkegrønne fargene som brukes i prosjektet
+    // Brand farger           --------------------------
     brand: {
       main: '#28604B',        // Mørkegrønn hovedfarge brukt i header
       light: '#3A7A62',       // Lysere versjon av mørkegrønn
-      dark: '#1E4D3B',        // Mørkere versjon av mørkegrønn
+      dark: '#7D3C98',        // Mørkere versjon av mørkegrønn
       contrastText: '#FFF',   // Tekstfarge på mørkegrønn bakgrunn
     },
       
-    // Primærfarger
+    // Primærfarger           --------------------------
     primary: {
       main: '#4CAF50',        // Grønn hovedfarge
       light: '#81C784',       // Lysere grønn
@@ -15,7 +15,7 @@ export const theme = {
       contrastText: '#FFF',   // Tekstfarge på grønn bakgrunn
     },
       
-    // Sekundærfarger
+    // Sekundærfarger         --------------------------
     secondary: {
       main: '#FFC107',        // Gul/oransje hovedfarge
       light: '#FFECB3',       // Lysere gul
@@ -23,7 +23,7 @@ export const theme = {
       contrastText: '#333',   // Tekstfarge på gul bakgrunn
     },
       
-    // Status farger
+    // Statusfarger          --------------------------
     status: {
       success: '#E8F5E9',     // Bakgrunn for suksess (grønn)
       warning: '#FFF9C4',     // Bakgrunn for advarsel (gul)
@@ -33,7 +33,7 @@ export const theme = {
       errorText: '#C62828',   // Tekst for feil
     },
       
-    // Grå nyanser
+    // Grånyanser            --------------------------
     grey: {
       light: '#F5F5F5',       // Lys grå (bakgrunn)
       medium: '#E0E0E0',      // Medium grå
@@ -41,7 +41,7 @@ export const theme = {
       lightest: '#f9f9f9',    // Ekstra lys grå for bakgrunn
     },
       
-    // Tekst farger
+    // Tekstfarger           --------------------------
     text: {
       primary: '#333',        // Primær tekstfarge
       secondary: '#666',      // Sekundær tekstfarge
@@ -49,7 +49,7 @@ export const theme = {
       light: '#FFF',          // Lys tekst på mørk bakgrunn
     },
       
-    // Bakgrunnsfarger
+    // Bakgrunnsfarger        --------------------------
     background: {
       default: '#F5F5F5',     // Standard bakgrunn
       paper: '#FFF',          // Bakgrunn for kort/papir-elementer
@@ -57,7 +57,7 @@ export const theme = {
       card: '#FFF',           // Bakgrunn for kort
     },
       
-    // Komponentspesifikke farger
+    // Komponentspesifikke farger ----------------------
     components: {
       card: {
         border: 'transparent',

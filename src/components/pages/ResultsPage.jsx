@@ -73,9 +73,9 @@ const Grid = styled.div`
 
 const ResultsCard = styled.div`
   background-color: ${props => {
-    if (props.fulfilled === props.total) return '#e8f5e9';
-    if (props.fulfilled > 0) return '#fff9c4';
-    return '#ffebee';
+    if (props.fulfilled === props.total) return 'props.theme.status.success';
+    if (props.fulfilled > 0) return 'props.theme.status.warning';
+    return 'props.theme.status.error';
   }};
   border-radius: 8px;
   padding: 1.5rem;

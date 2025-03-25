@@ -1,63 +1,131 @@
-import React, { useContext, useState, useRef, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { AssessmentContext } from '../../context/AssessmentContext';
-import { categories } from '../../data/categories';
-import CategoryCard from '../common/Category/CategoryCard';
+import { categories, categoryIcons } from '../../data/categories';
 import CategoryDetail from '../common/Category/CategoryDetail';
 
 const PageContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 `;
 
 const Header = styled.header`
-  text-align: center;
+  background-color: #28604B;
+  padding: 2rem;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
 `;
 
+const TitleContainer = styled.div`
+  flex: 3;
+`;
+
 const Title = styled.h1`
-  color: #333;
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+  font-size: 3.5rem;
+  margin: 0;
+  line-height: 1.1;
+  font-weight: bold;
 `;
 
-const ScoreDisplay = styled.div`
-  background-color: #f5f5f5;
-  border-radius: 50px;
-  width: 200px;
-  margin: 0 auto;
-  padding: 0.5rem 1rem;
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #333;
+const HeaderDescription = styled.p`
+  margin-top: 1rem;
+  line-height: 1.5;
+  max-width: 600px;
 `;
 
-const ProgressIndicator = styled.div`
-  margin: 1rem 0;
-  text-align: center;
-  color: #666;
-  font-size: 1rem;
+const VikingsContainer = styled.div`
+  flex: 1;
+  text-align: right;
 `;
 
-const Grid = styled.div`
+const CategoriesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin: 1.5rem 0;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  padding: 0 2rem 2rem 2rem;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const CategoryCard = styled.div`
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const IconContainer = styled.div`
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+`;
+
+const CategoryTitle = styled.h3`
+  font-size: 1.2rem;
+  margin: 0;
+  margin-bottom: 1rem;
+  color: #333;
+`;
+
+const CategoryDescription = styled.p`
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.5;
+`;
+
+const StatusIndicator = styled.div`
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  background-color: #f5f5f5;
+  border-radius: 20px;
+  text-align: center;
+  color: ${props => props.isComplete ? '#28604B' : '#666'};
+  font-weight: ${props => props.isComplete ? 'bold' : 'normal'};
+`;
+
+const WavyDivider = styled.div`
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='20px' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,10 C30,20 70,0 100,10 L100,00 L0,0 Z' fill='%23f5f5f5'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  margin: 1rem 0;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
+  margin: 2rem 0;
 `;
 
 const ActionButton = styled.button`
-  background-color: ${props => props.primary ? '#4CAF50' : '#f0f0f0'};
+  background-color: ${props => props.primary ? '#28604B' : '#f0f0f0'};
   color: ${props => props.primary ? 'white' : '#333'};
   border: none;
   padding: 0.75rem 2rem;
@@ -69,7 +137,7 @@ const ActionButton = styled.button`
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   
   &:hover {
-    background-color: ${props => props.primary ? '#45a049' : '#e0e0e0'};
+    background-color: ${props => props.primary ? '#1e4d3b' : '#e0e0e0'};
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   }
@@ -83,15 +151,41 @@ const ActionButton = styled.button`
   }
 `;
 
+const StatusBar = styled.div`
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  text-align: center;
+`;
+
+const ProgressBar = styled.div`
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  margin: 0.5rem 0;
+  overflow: hidden;
+`;
+
+const ProgressFill = styled.div`
+  height: 100%;
+  width: ${props => props.progress}%;
+  background-color: #28604B;
+  border-radius: 5px;
+  transition: width 0.5s ease;
+`;
+
 const AssessmentPage = () => {
   const { 
     securityScore, 
     completedCategories, 
-    isAssessmentComplete
+    isAssessmentComplete,
+    getCategoryStatus
   } = useContext(AssessmentContext);
   
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const modalRef = useRef(null);
   const navigate = useNavigate();
   
   const handleCategoryClick = (categoryId) => {
@@ -106,55 +200,62 @@ const AssessmentPage = () => {
     navigate('/results');
   };
   
-  // Render the modal independently from main component
-  useEffect(() => {
-    // We create and attach/remove the modal element outside the normal component cycle
-    if (selectedCategory) {
-      if (!modalRef.current) {
-        modalRef.current = document.createElement('div');
-        modalRef.current.id = 'category-modal-container';
-        document.body.appendChild(modalRef.current);
-      }
-    } else {
-      if (modalRef.current) {
-        if (document.body.contains(modalRef.current)) {
-          document.body.removeChild(modalRef.current);
-        }
-        modalRef.current = null;
-      }
-    }
-  }, [selectedCategory]);
-  
   // Calculate progress
   const progress = Math.round((completedCategories.length / categories.length) * 100);
   
   return (
     <PageContainer>
       <Header>
-        <Title>Basline cybsikk lightweight</Title>
-        <ScoreDisplay>Din score: {securityScore}/100</ScoreDisplay>
-        <ProgressIndicator>
-          Kategorier gjennomført: {completedCategories.length}/{categories.length} ({progress}%)
-        </ProgressIndicator>
+        <TitleContainer>
+          <Title>12 VEIER TIL SIKKERHET</Title>
+          <HeaderDescription>
+            Dette verktøyet kombinerer ledende cybersikkerhets-standarder fra CIS, NSM og NIST i en brukervennlig løsning for små bedrifter uten IT-ekspertise. Det forener teori med praktiske tiltak for rask risikoidentifisering og konkrete forbedringer.
+          </HeaderDescription>
+        </TitleContainer>
+        <VikingsContainer>
+          {/* This would be replaced with the actual viking illustrations from your design */}
+          <div style={{ fontSize: '40px' }}>👨‍🦰👨‍🦱👨‍🦳</div>
+        </VikingsContainer>
       </Header>
       
-      <Grid>
-        {categories.map(category => (
-          <motion.div
-            key={category.id}
-            layout
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <CategoryCard 
-              category={category}
-              onClick={handleCategoryClick}
-              isActive={selectedCategory === category.id}
-            />
-          </motion.div>
-        ))}
-      </Grid>
+      <StatusBar>
+        <div>Kategorier gjennomført: {completedCategories.length}/{categories.length}</div>
+        <ProgressBar>
+          <ProgressFill progress={progress} />
+        </ProgressBar>
+        <div>Din sikkerhetsscore: {securityScore}/100</div>
+      </StatusBar>
+      
+      <CategoriesGrid>
+        {categories.map((category, index) => {
+          const status = getCategoryStatus(category.id);
+          const isComplete = completedCategories.includes(category.id);
+          
+          return (
+            <motion.div
+              key={category.id}
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+            >
+              <CategoryCard onClick={() => handleCategoryClick(category.id)}>
+                <IconContainer>
+                  {categoryIcons[category.icon]}
+                </IconContainer>
+                <CategoryTitle>{category.name}</CategoryTitle>
+                <CategoryDescription>
+                  {category.description}
+                </CategoryDescription>
+                <StatusIndicator isComplete={isComplete}>
+                  {status.answered}/{status.total} spørsmål besvart
+                </StatusIndicator>
+              </CategoryCard>
+              {index < categories.length - 1 && (index + 1) % 3 === 0 && <WavyDivider />}
+            </motion.div>
+          );
+        })}
+      </CategoriesGrid>
       
       <ButtonContainer>
         <ActionButton 

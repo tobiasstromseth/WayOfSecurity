@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { AssessmentContext } from '../../../context/AssessmentContext';
 import { questions } from '../../../data/questions';
-import { categories } from '../../../data/categories';
+import { categories, categoryIcons } from '../../../data/categories';
 import Question from '../Question';
 import ModalPortal from '../ModalPortal';
 
@@ -34,18 +34,18 @@ const DetailContainer = styled(motion.div)`
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  padding: 1rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   z-index: 10000;
   overflow: hidden;
   position: relative;
-  margin: 0 auto; /* Ensure horizontal centering */
+  margin: 0 auto;
   
   @media (max-width: 768px) {
     width: 95%;
     max-height: 95vh;
-    padding: 0.75rem;
+    padding: 1rem;
   }
 `;
 
@@ -54,6 +54,20 @@ const DetailHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+`;
+
+const HeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const IconContainer = styled.div`
+  width: 48px;
+  height: 48px;
+  margin-right: 1rem;
+  color: #28604B;
 `;
 
 const Title = styled.h2`
@@ -78,7 +92,7 @@ const QuestionsContainer = styled.div`
   flex: 1;
   overflow-y: auto;
   padding-right: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   
   /* Custom scrollbar */
   &::-webkit-scrollbar {
@@ -100,22 +114,57 @@ const QuestionsContainer = styled.div`
   }
 `;
 
-const QuestionsHeader = styled.h3`
-  margin-top: 0;
+const QuestionsHeader = styled.div`
   margin-bottom: 1.5rem;
-  color: #444;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const QuestionsTitle = styled.h3`
+  margin: 0;
+  color: #28604B;
+`;
+
+const QuestionsStatus = styled.div`
+  font-size: 0.9rem;
+  color: #666;
+  background-color: #f5f5f5;
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+`;
+
+const Description = styled.p`
+  margin-bottom: 1.5rem;
+  color: #555;
+  line-height: 1.5;
+`;
+
+const NoQuestionsMessage = styled.div`
+  padding: 2rem;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  color: #666;
 `;
 
 const CloseButtonContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 1rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+`;
+
+const CategoryStatus = styled.div`
+  font-size: 0.9rem;
+  color: ${props => props.isComplete ? '#28604B' : '#666'};
+  font-weight: ${props => props.isComplete ? 'bold' : 'normal'};
 `;
 
 const ActionButton = styled.button`
-  background-color: ${props => props.primary ? '#4CAF50' : '#f0f0f0'};
+  background-color: ${props => props.primary ? '#28604B' : '#f0f0f0'};
   color: ${props => props.primary ? 'white' : '#333'};
   border: none;
   padding: 0.75rem 1.5rem;
@@ -125,7 +174,7 @@ const ActionButton = styled.button`
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: ${props => props.primary ? '#45a049' : '#e0e0e0'};
+    background-color: ${props => props.primary ? '#1e4d3b' : '#e0e0e0'};
   }
   
   @media (max-width: 480px) {
@@ -135,12 +184,18 @@ const ActionButton = styled.button`
 `;
 
 const CategoryDetail = memo(({ categoryId, onClose, standalone = false }) => {
-  const { updateAnswer, answers, getCategoryStatus } = useContext(AssessmentContext);
+  const { updateAnswer, answers, getCategoryStatus, completedCategories } = useContext(AssessmentContext);
   const [internalState, setInternalState] = useState({});
   
   const category = categories.find(c => c.id === categoryId);
+  
+  // Get questions directly for this category
   const categoryQuestions = questions.filter(q => q.categoryId === categoryId);
+  
+  // Get status directly from the Assessment context
   const status = getCategoryStatus(categoryId);
+  
+  const isComplete = completedCategories.includes(categoryId);
   
   // Initialize internal state from context
   useEffect(() => {
@@ -166,6 +221,8 @@ const CategoryDetail = memo(({ categoryId, onClose, standalone = false }) => {
   
   if (!category) return null;
   
+  const icon = categoryIcons[category.icon] || null;
+  
   return (
     <ModalPortal>
       <Overlay 
@@ -182,30 +239,47 @@ const CategoryDetail = memo(({ categoryId, onClose, standalone = false }) => {
           onClick={handleStopPropagation}
         >
           <DetailHeader>
-            <Title>{category.name}</Title>
+            <HeaderContent>
+              {icon && <IconContainer>{icon}</IconContainer>}
+              <Title>{category.name}</Title>
+            </HeaderContent>
             <CloseButton onClick={onClose}>×</CloseButton>
           </DetailHeader>
           
+          <Description>{category.description}</Description>
+          
           <QuestionsContainer>
             <QuestionsHeader>
-              Spørsmål ({status.answered} av {status.total} besvart)
+              <QuestionsTitle>Spørsmål</QuestionsTitle>
+              <QuestionsStatus>
+                {status.answered} av {status.total} besvart
+              </QuestionsStatus>
             </QuestionsHeader>
             
-            {categoryQuestions.map(question => (
-              <Question
-                key={question.id}
-                question={question}
-                // Use internal state first, fall back to context state
-                answer={internalState[question.id] !== undefined ? 
-                  internalState[question.id] : 
-                  answers[categoryId]?.[question.id]}
-                onChange={(value) => handleAnswerChange(question.id, value)}
-              />
-            ))}
+            {categoryQuestions.length > 0 ? (
+              categoryQuestions.map(question => (
+                <Question
+                  key={question.id}
+                  question={question}
+                  // Use internal state first, fall back to context state
+                  answer={internalState[question.id] !== undefined ? 
+                    internalState[question.id] : 
+                    answers[categoryId]?.[question.id]}
+                  onChange={(value) => handleAnswerChange(question.id, value)}
+                />
+              ))
+            ) : (
+              <NoQuestionsMessage>
+                Ingen spørsmål er tilgjengelig for denne kategorien ennå.
+              </NoQuestionsMessage>
+            )}
           </QuestionsContainer>
           
           <CloseButtonContainer>
-            <ActionButton onClick={onClose}>Lukk kategori</ActionButton>
+            <CategoryStatus isComplete={isComplete}>
+              {isComplete ? 'Kategori fullført' : `${status.answered} av ${status.total} spørsmål besvart`}
+            </CategoryStatus>
+            <ActionButton primary onClick={onClose}>Lukk kategori</ActionButton>
           </CloseButtonContainer>
         </DetailContainer>
       </Overlay>

@@ -13,9 +13,9 @@ const PageContainer = styled.div`
 `;
 
 const Header = styled.header`
-  background-color: #28604B;
+  background-color: ${props => props.theme.brand.main};
   padding: 2rem;
-  color: white;
+  color: ${props => props.theme.text.light};
   display: flex;
   justify-content: space-between;
   align-items: center;

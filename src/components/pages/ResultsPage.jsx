@@ -33,16 +33,16 @@ const Header = styled.header`
 `;
 
 const Title = styled.h1`
-  color: #333;
+  color: ${props => props.theme.text.primary};
   font-size: 2rem;
   margin-bottom: 0.5rem;
 `;
 
 const ScoreDisplay = styled.div`
   background-color: ${props => {
-    if (props.score >= 80) return '#e8f5e9';
-    if (props.score >= 50) return '#fff9c4';
-    return '#ffebee';
+    if (props.score >= 80) return props.theme.status.success;
+    if (props.score >= 50) return props.theme.status.warning;
+    return props.theme.status.error;
   }};
   border-radius: 50px;
   width: 200px;
@@ -51,9 +51,9 @@ const ScoreDisplay = styled.div`
   font-size: 1.1rem;
   font-weight: 500;
   color: ${props => {
-    if (props.score >= 80) return '#2e7d32';
-    if (props.score >= 50) return '#f57f17';
-    return '#c62828';
+    if (props.score >= 80) return props.theme.status.successText;
+    if (props.score >= 50) return props.theme.status.warningText;
+    return props.theme.status.errorText;
   }};
 `;
 
@@ -61,7 +61,7 @@ const ScoreMessage = styled.p`
   text-align: center;
   margin-top: 0.5rem;
   font-size: 1.1rem;
-  color: #666;
+  color: ${props => props.theme.text.secondary};
 `;
 
 const Grid = styled.div`

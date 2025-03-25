@@ -31,9 +31,9 @@ const DetailContainer = styled(motion.div)`
   max-width: 800px;
   height: fit-content;
   max-height: 90vh;
-  background-color: white;
+  background-color: ${props => props.theme.background.modal};
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 25px ${props => props.theme.components.card.activeShadow};
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -54,7 +54,7 @@ const DetailHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid ${props => props.theme.components.divider.main};
   padding-bottom: 1rem;
 `;
 
@@ -67,12 +67,12 @@ const IconContainer = styled.div`
   width: 48px;
   height: 48px;
   margin-right: 1rem;
-  color: #28604B;
+  color: ${props => props.theme.brand.main};
 `;
 
 const Title = styled.h2`
   margin: 0;
-  color: #333;
+  color: ${props => props.theme.text.primary};
   font-size: 1.5rem;
 `;
 
@@ -81,10 +81,10 @@ const CloseButton = styled.button`
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #666;
+  color: ${props => props.theme.text.secondary};
   
   &:hover {
-    color: #333;
+    color: ${props => props.theme.text.primary};
   }
 `;
 
@@ -100,17 +100,17 @@ const QuestionsContainer = styled.div`
   }
   
   &::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: ${props => props.theme.grey.light};
     border-radius: 10px;
   }
   
   &::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: ${props => props.theme.grey.medium};
     border-radius: 10px;
   }
   
   &::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
+    background: ${props => props.theme.grey.dark};
   }
 `;
 
@@ -123,29 +123,29 @@ const QuestionsHeader = styled.div`
 
 const QuestionsTitle = styled.h3`
   margin: 0;
-  color: #28604B;
+  color: ${props => props.theme.brand.main};
 `;
 
 const QuestionsStatus = styled.div`
   font-size: 0.9rem;
-  color: #666;
-  background-color: #f5f5f5;
+  color: ${props => props.theme.text.secondary};
+  background-color: ${props => props.theme.grey.light};
   border-radius: 20px;
   padding: 0.25rem 0.75rem;
 `;
 
 const Description = styled.p`
   margin-bottom: 1.5rem;
-  color: #555;
+  color: ${props => props.theme.text.secondary};
   line-height: 1.5;
 `;
 
 const NoQuestionsMessage = styled.div`
   padding: 2rem;
   text-align: center;
-  background-color: #f9f9f9;
+  background-color: ${props => props.theme.grey.lightest};
   border-radius: 8px;
-  color: #666;
+  color: ${props => props.theme.text.secondary};
 `;
 
 const CloseButtonContainer = styled.div`
@@ -153,19 +153,19 @@ const CloseButtonContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-top: 1rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid ${props => props.theme.components.divider.main};
   padding-top: 1rem;
 `;
 
 const CategoryStatus = styled.div`
   font-size: 0.9rem;
-  color: ${props => props.isComplete ? '#28604B' : '#666'};
+  color: ${props => props.isComplete ? props.theme.brand.main : props.theme.text.secondary};
   font-weight: ${props => props.isComplete ? 'bold' : 'normal'};
 `;
 
 const ActionButton = styled.button`
-  background-color: ${props => props.primary ? '#28604B' : '#f0f0f0'};
-  color: ${props => props.primary ? 'white' : '#333'};
+  background-color: ${props => props.primary ? props.theme.components.button.primary : props.theme.components.button.secondary};
+  color: ${props => props.primary ? props.theme.text.light : props.theme.text.primary};
   border: none;
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
@@ -174,7 +174,7 @@ const ActionButton = styled.button`
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: ${props => props.primary ? '#1e4d3b' : '#e0e0e0'};
+    background-color: ${props => props.primary ? props.theme.components.button.hover.primary : props.theme.components.button.hover.secondary};
   }
   
   @media (max-width: 480px) {

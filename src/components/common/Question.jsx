@@ -2,11 +2,11 @@ import React, { useState, memo } from 'react';
 import styled from 'styled-components';
 
 const QuestionContainer = styled.div`
-  background-color: #f9f9f9;
+  background-color: ${props => props.theme.background.paper};
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px ${props => props.theme.components.card.shadow};
   
   @media (max-width: 768px) {
     padding: 0.75rem;
@@ -15,13 +15,13 @@ const QuestionContainer = styled.div`
 
 const QuestionText = styled.div`
   font-weight: 500;
-  color: #333;
+  color: ${props => props.theme.text.primary};
   margin-bottom: 0.75rem;
 `;
 
 const Standard = styled.div`
   font-size: 0.8rem;
-  color: #666;
+  color: ${props => props.theme.text.secondary};
   margin-bottom: 1rem;
   font-style: italic;
 `;
@@ -39,21 +39,21 @@ const OptionsContainer = styled.div`
 const Option = styled.button`
   background-color: ${props => {
     if (props.selected) {
-      return props.value ? '#e8f5e9' : '#ffebee';
+      return props.value ? props.theme.status.success : props.theme.status.error;
     }
-    return '#f0f0f0';
+    return props.theme.components.button.secondary;
   }};
   color: ${props => {
     if (props.selected) {
-      return props.value ? '#2e7d32' : '#c62828';
+      return props.value ? props.theme.status.successText : props.theme.status.errorText;
     }
-    return '#333';
+    return props.theme.text.primary;
   }};
   border: 1px solid ${props => {
     if (props.selected) {
-      return props.value ? '#81c784' : '#ef9a9a';
+      return props.value ? props.theme.primary.light : '#ef9a9a';
     }
-    return '#ddd';
+    return props.theme.grey.medium;
   }};
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -67,7 +67,7 @@ const Option = styled.button`
       if (props.selected) {
         return props.value ? '#c8e6c9' : '#ffcdd2';
       }
-      return '#e0e0e0';
+      return props.theme.components.button.hover.secondary;
     }};
   }
 `;
@@ -75,7 +75,7 @@ const Option = styled.button`
 const InfoButton = styled.button`
   background: none;
   border: none;
-  color: #2196F3;
+  color: ${props => props.theme.secondary.main};
   cursor: pointer;
   font-size: 0.9rem;
   padding: 0;
@@ -88,7 +88,7 @@ const InfoButton = styled.button`
 `;
 
 const InfoPanel = styled.div`
-  background-color: #e3f2fd;
+  background-color: ${props => props.theme.components.infoPanel.background};
   border-radius: 4px;
   padding: 1rem;
   margin-top: 0.75rem;
@@ -99,11 +99,11 @@ const InfoPanel = styled.div`
 const InfoTitle = styled.div`
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #1976d2;
+  color: ${props => props.theme.components.infoPanel.title};
 `;
 
 const InfoText = styled.div`
-  color: #333;
+  color: ${props => props.theme.text.primary};
 `;
 
 const Question = memo(({ question, answer, onChange }) => {

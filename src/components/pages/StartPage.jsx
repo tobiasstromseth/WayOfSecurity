@@ -83,14 +83,22 @@ const StartPage = () => {
       <Header>
         <Title>Basline cybsikk lightweight</Title>
         <Subtitle>Enkel cybersikkerhetsvurdering for mikrobedrifter</Subtitle>
-      </Header>
+      </Header> 
       
       <InfoSection>
         <h2>Om verktøyet</h2>
         <p>
-          Dette verktøyet hjelper mikrobedrifter med å vurdere sin digitale sikkerhet gjennom enkle spørsmål 
-          og gir praktiske anbefalinger basert på dine svar. Verktøyet er designet for å være lett å bruke 
-          selv uten teknisk ekspertise.
+        Velkommen til [Produtti] - verktøyet som gjør digital sikkerhet enkelt for deg og din bedrift.
+<br></br><br></br>
+Vi har samlet essensen fra ledende sikkerhetsstandarder som NSMs grunnprinsipper, CIS Controls og NIST Cybersecurity Framework, og omformet dem til konkrete råd som passer perfekt for små og mellomstore bedrifter.
+<br></br><br></br>
+Ingen teknisk ekspertise nødvendig – bare ærlige svar på enkle spørsmål.
+<br></br><br></br>
+Små bedrifter er spesielt sårbare for digitale trusler, men mangler ofte ressursene til omfattende sikkerhetsarbeid. Derfor er [Produtti] skreddersydd for nettopp din virksomhets behov, med fokus på de mest effektive tiltakene som gir størst gevinst med minst mulig ressursbruk. Alle anbefalinger er basert på dokumentert beste praksis, men forenklet for å passe bedrifter med 1-20 ansatte.
+<br></br><br></br>
+Ved å bruke bare [tidsestimat] på denne vurderingen får du en praktisk handlingsplan som styrker din digitale sikkerhet uten behov for IT-avdeling eller store investeringer. Verktøyet er designet for bedriftseiere og ledere som deg, som vil beskytte virksomheten med enkle, forståelige tiltak.
+<br></br><br></br>
+Start reisen mot tryggere digitale løsninger i dag!
         </p>
         
         <h3>Funksjoner:</h3>
@@ -99,7 +107,15 @@ const StartPage = () => {
           <li>Personlige anbefalinger basert på dine svar</li>
           <li>Enkel visualisering av styrker og svakheter</li>
           <li>Praktiske tiltak som forbedrer sikkerheten</li>
-          <li>Basert på anerkjente sikkerhetsstandarder</li>
+        </FeatureList>
+        <FeatureList>
+        <h3>[Produtti] er forankret i følgende anerkjente sikkerhetsstandarder:</h3>
+          <li>NSMs grunnprinsipper for IKT-sikkerhet</li>
+          <li>CIS Controls V8 (Center for Internet Security)</li>
+          <li>NIST Cybersecurity Framework</li>
+          <li>NISTIR 7621 (Small Business Information Security)</li>
+          <li>NorSIS sikkerhetsveiledninger</li>
+          <li>Datatilsynets anbefalinger for informasjonssikkerhet</li>
         </FeatureList>
         
         <Button onClick={handleStart}>Start vurdering</Button>

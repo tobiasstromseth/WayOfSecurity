@@ -72,3 +72,50 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+# Docker Development Setup for WayOfSecurity
+
+This document explains how to run the WayOfSecurity application in a Docker development environment.
+
+## Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+## Running the Development Environment
+
+The development setup provides hot reloading so you can see your changes in real-time.
+
+```bash
+# Build and start the container
+docker-compose up --build
+```
+
+Access the application at http://localhost:3000
+
+Any changes you make to the source code will be automatically reflected in the browser.
+
+## Stopping the Development Environment
+
+To stop the application:
+
+```bash
+docker-compose down
+```
+
+## Using Docker Without Compose
+
+If you prefer to use Docker commands directly:
+
+```bash
+# Build the image
+docker build -t wayofsecurity-dev .
+
+# Run the container
+docker run -p 3000:3000 -v ${PWD}:/app -v /app/node_modules wayofsecurity-dev
+```
+
+## Troubleshooting
+
+- **File changes not detected**: If your changes aren't being detected, you may need to restart the container or try setting `CHOKIDAR_USEPOLLING=true` in your environment.
+- **Port conflicts**: If port 3000 is already in use, modify the `ports` section in docker-compose.yml to use a different port (e.g., `"3001:3000"`).

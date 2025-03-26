@@ -5,7 +5,7 @@
     display: flex;
     justify-content: space-between;
     align-items: stretch; /* Endret fra center til stretch */
-    height: 30rem; /* Fast høyde i stedet for prosent */
+    height: 33vh; /* Fast høyde i stedet for prosent */
     /* eller bruk min-height hvis du vil ha en minimum høyde */
 }
 
@@ -15,7 +15,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 30rem;
+    height: 33vh;
     z-index: -1; /* Plasserer bakgrunnen bak innholdet */
 }
 
@@ -45,6 +45,7 @@
     font-weight: 900;
     letter-spacing: -0.06em;
     width: 100%;
+    transform: skewX(-12deg); /* Legger til en skrå transformasjon for å forsterke den kursive effekten */
 }
 
 .exclamation {
@@ -53,10 +54,12 @@
 
 .subtitle {
     color: #ffffff;
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: normal;
     text-align: justify;    /* Dette gir den justified-effekt */
     width: 100%;            /* For å sikre at elementet tar full bredde */
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .start-test-btn {
@@ -99,7 +102,7 @@
     max-width: 600px;
     height: auto;
     aspect-ratio: 1 / 1.45;
-    background-color: #8558F9;
+    background-color: #283BE6;
     border-radius: 12px;
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
     overflow: hidden;
@@ -107,6 +110,16 @@
     flex-direction: column;
     padding: 1.5rem;
     color: #ffffff;
+  }
+
+  .card1 {
+    background-color: #FE4626;
+  }
+  .card2 {
+    background-color: #283BE6;
+  }
+  .card3 {
+    background-color: #8558F9;
   }
   
   /* Tittel for kortet */

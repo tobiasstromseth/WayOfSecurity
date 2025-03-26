@@ -36,7 +36,7 @@ const StartPage = () => {
         </section>
         <section className="info-section-right">
         <div class="cards-container">
-          <div class="card features">
+          <div class="card features card1">
             <div class="card-header">
               <h3>Funksjoner:</h3>
             </div>
@@ -48,7 +48,7 @@ const StartPage = () => {
             </ul>
           </div>
 
-          <div class="card standards">
+          <div class="card standards card2">
             <div class="card-header">
               <h3>Forankret i:</h3>
             </div>
@@ -62,7 +62,7 @@ const StartPage = () => {
             </ul>
           </div>
           
-          <div class="card target-groups">
+          <div class="card target-groups card3">
             <div class="card-header">
               <h3>Hvem passer BSIKKERHET for?</h3>
             </div>

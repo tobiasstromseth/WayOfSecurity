@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import SecurityImage from '../../../assets/images/18e468bc-bde8-43ad-88b6-459f92947e17_removalai_preview.png';
 import './StartPage.css';
 
 const StartPage = () => {
@@ -19,7 +20,7 @@ const StartPage = () => {
         </div>
         <div className="header-right">
         <button className="start-test-btn" onClick={handleStart}>START SELVTEST</button>
-        <img src="" alt="Placholder" />
+        <img src={SecurityImage} alt="Sikkerhetsbilde" />
         </div>
       </header> 
       <header className='background-header'></header>

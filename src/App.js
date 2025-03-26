@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { AssessmentProvider } from "./context/AssessmentContext";
 import { theme } from "./styles/theme";
-import StartPage from "./components/pages/StartPage";
-import AssessmentPage from "./components/pages/AssessmentPage";
-import ResultsPage from "./components/pages/ResultsPage";
+import StartPage from "./components/pages/StartPage/StartPage";
+import AssessmentPage from "./components/pages/AssessmentPage/AssessmentPage";
+import ResultsPage from "./components/pages/ResultsPage/ResultsPage";
 import "./styles/global.css";
 
 function App() {

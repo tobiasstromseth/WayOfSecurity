@@ -1,0 +1,174 @@
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    perspective: 1000px;
+  }
+  
+  .flip-container {
+    transform-style: preserve-3d;
+    width: 100%;
+  }
+  
+  .flipped-content {
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+    position: relative;
+    width: 100%;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .title {
+    color: var(--text-primary);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .score-display {
+    border-radius: 50px;
+    width: 200px;
+    margin: 0 auto;
+    padding: 0.5rem 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  
+  .score-display.score-success {
+    background-color: var(--status-success);
+    color: var(--status-success-text);
+  }
+  
+  .score-display.score-warning {
+    background-color: var(--status-warning);
+    color: var(--status-warning-text);
+  }
+  
+  .score-display.score-error {
+    background-color: var(--status-error);
+    color: var(--status-error-text);
+  }
+  
+  .score-message {
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .results-card {
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+  }
+  
+  .results-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+  }
+  
+  .results-card.fulfilled {
+    background-color: var(--status-success);
+  }
+  
+  .results-card.partial {
+    background-color: var(--status-warning);
+  }
+  
+  .results-card.unfulfilled {
+    background-color: var(--status-error);
+  }
+  
+  .icon-container {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    color: #333;
+  }
+  
+  .card-title {
+    margin: 0;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    color: #333;
+  }
+  
+  .score-bar {
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+  
+  .score-fill {
+    height: 100%;
+  }
+  
+  .score-fill.fulfilled {
+    background-color: var(--status-success-fill);
+  }
+  
+  .score-fill.partial {
+    background-color: var(--status-warning-fill);
+  }
+  
+  .score-fill.unfulfilled {
+    background-color: var(--status-error-fill);
+  }
+  
+  .score-text {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .action-button {
+    background-color: #f0f0f0;
+    color: #333;
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .action-button:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  
+  .action-button.primary {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .action-button.primary:hover {
+    background-color: #45a049;
+  }

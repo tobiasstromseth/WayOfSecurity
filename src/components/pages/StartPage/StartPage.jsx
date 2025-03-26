@@ -12,9 +12,16 @@ const StartPage = () => {
   return (
     <div className="page-container">
       <header className="header">
-        <h1 className="title">Basline cybsikk lightweight</h1>
-        <h2 className="subtitle">Enkel cybersikkerhetsvurdering for mikrobedrifter</h2>
+        <div className="header-left">
+        <h1 className="title">BS<span className="exclamation">!</span>KKERHET</h1>
+        <h2 className="subtitle">Dette verktøyet er utviklet med et solid fundament i anerkjent forskning og beste praksis innen cybersikkerhet. Tiltakene som benyttes er hentet fra flere ledende kilder, blant annet CIS Controls, NSMs grunnprinsipper for IKT-sikkerhet og NIST Cybersecurity Framework (CSF), samt andre ressurser som bidrar til å sikre en helhetlig tilnærming til digital sikkerhet.</h2>
+        </div>
+        <div className="header-right">
+        <h1 className="title">START SELVTEST</h1>
+        <p>Placeholder bilde</p>
+        </div>
       </header> 
+      <header className='background-header'></header>
       
       <section className="info-section">
         <h2>Om verktøyet</h2>

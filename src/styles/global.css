@@ -56,3 +56,9 @@ body,
     display: none !important;
   }
 }
+
+.page-container {
+  max-width: 1600px;
+  margin: auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}

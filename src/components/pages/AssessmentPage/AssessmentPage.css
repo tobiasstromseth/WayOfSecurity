@@ -1,29 +1,9 @@
-.page-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  .header {
-    background-color: var(--brand-main);
-    padding: 2rem;
-    color: var(--text-light);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-  }
-  
+ 
+ 
   .title-container {
     flex: 3;
   }
   
-  .title {
-    font-size: 3.5rem;
-    margin: 0;
-    line-height: 1.1;
-    font-weight: bold;
-  }
   
   .header-description {
     margin-top: 1rem;

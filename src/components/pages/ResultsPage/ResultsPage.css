@@ -1,11 +1,4 @@
-.page-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    perspective: 1000px;
-  }
-  
+ 
   .flip-container {
     transform-style: preserve-3d;
     width: 100%;
@@ -18,16 +11,7 @@
     width: 100%;
   }
   
-  .header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-  
-  .title {
-    color: var(--text-primary);
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
+ 
   
   .score-display {
     border-radius: 50px;

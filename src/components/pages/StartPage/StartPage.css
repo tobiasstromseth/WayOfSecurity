@@ -1,260 +1,290 @@
-
 /*############################################################*/
 /*_________________________HEADER______________________________*/
 
 .start-page-header {
-    background-color: var(--blue);
-    color: var(--text-light);
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch; /* Endret fra center til stretch */
-    height: 33vh; /* Fast høyde i stedet for prosent */
-    /* eller bruk min-height hvis du vil ha en minimum høyde */
+  background-color: var(--blue);
+  color: var(--text-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  height: 33vh;
+  min-height: 250px; /* Ensure minimum height on small screens */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 .background-header {
-    background-color: #283BE6;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 33vh;
-    z-index: -1; /* Plasserer bakgrunnen bak innholdet */
+  background-color: #283BE6;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 33vh;
+  min-height: 250px;
+  z-index: -1;
 }
 
-
-
 .header-left {
-    padding: 1rem 2rem;
-    width: 50%;
-    height: 100%;
-    background-color: #283BE6;
+  padding: 1rem 2rem;
+  width: 50%;
+  height: 100%;
+  background-color: #283BE6;
 }
 
 .header-right {
-    padding: 1rem 2rem;
-    width: 50%;
-    height: 100%;
-    background-color: #283BE6;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  padding: 1rem 2rem;
+  width: 50%;
+  height: 100%;
+  background-color: #283BE6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap; /* Allow content to wrap */
+  gap: 1rem; /* Space between wrapped elements */
 }
-  
+
+.header-right img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
 .title {
-    color: #ffffff;
-    font-size: clamp(16px, 7.25vw, 120px);
-    font-style: italic;
-    font-weight: 900;
-    letter-spacing: -0.06em;
-    width: 100%;
-    transform: skewX(-12deg); /* Legger til en skrå transformasjon for å forsterke den kursive effekten */
+  color: #ffffff;
+  font-size: clamp(16px, 7.25vw, 120px);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  width: 100%;
+  transform: skewX(-12deg);
 }
 
 .exclamation {
-    color: #FE4626;
+  color: #FE4626;
 }
 
 .subtitle {
-    color: #ffffff;
-    font-size: 1rem;
-    font-weight: normal;
-    text-align: justify;    /* Dette gir den justified-effekt */
-    width: 100%;            /* For å sikre at elementet tar full bredde */
-    margin-top: auto;
-    margin-bottom: auto;
+  color: #ffffff;
+  font-size: clamp(0.75rem, 1vw, 1rem);
+  font-weight: normal;
+  text-align: justify;
+  width: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .start-test-btn {
-    background-color: #FE4626;
-    width: 247px;
-    height: 51px;
-    border-radius: 100px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    color: #ffffff;
+  background-color: #FE4626;
+  width: 247px;
+  height: 51px;
+  border-radius: 100px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+  margin: 1rem 0;
 }
 
 .start-test-btn:hover {
-    background-color: #ff2600;
-   
+  background-color: #ff2600;
 }
 
 /*############################################################*/
 /*_____________________INFO SECTION___________________________*/
 
 .info-section {
-    color: #000000;
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch; /* Endret fra center til stretch */
+  color: #000000;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-wrap: wrap; /* Enable wrapping for smaller screens */
+  gap: 2rem; /* Add gap between wrapped elements */
+  padding: 2rem 1rem; /* Add padding on all sides */
 }
-  .info-section-left {
-    border-radius: 8px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    width: 50%;
-    text-align: justify; 
-  }
 
-  .info-section-right {
-    border-radius: 8px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    width: 50%;
-  }
+.info-section-left {
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  width: 100%; /* Full width on mobile */
+  text-align: justify;
+}
 
-  /* Grunnleggende kortstruktur med 2:1 forhold */
+.info-section-right {
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  width: 100%; /* Full width on mobile */
+}
+
+/* Grunnleggende kortstruktur med 2:1 forhold */
 .card {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    aspect-ratio: 1 / 1.45;
-    background-color: #283BE6;
-    border-radius: 12px;
-    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    padding: 1.5rem;
-    color: #ffffff;
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  aspect-ratio: 1 / 1.45;
+  background-color: #283BE6;
+  border-radius: 12px;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  color: #ffffff;
+  margin: 0 auto 1rem auto; /* Center cards with margin */
+}
+
+.card1 {
+  background-color: #FE4626;
+}
+.card2 {
+  background-color: #283BE6;
+}
+.card3 {
+  background-color: #8558F9;
+}
+
+/* Tittel for kortet */
+.card h3 {
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #ffffff;
+  padding-bottom: 0.5rem;
+}
+
+/* Feature list styling optimalisert for 2:1 kort */
+.feature-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.feature-list li {
+  padding: 0.5rem 0 0.5rem 1.75rem;
+  position: relative;
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+  line-height: 1.3;
+  border-bottom: none;
+}
+  
+/* Container for begge kortene */
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.feature-list li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.feature-list li:last-child {
+  border-bottom: none;
+}
+
+.feature-list li:before {
+  content: "✓";
+  color: #FE4626;
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+.card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card::-webkit-scrollbar-track {
+  background: #ffffff00;
+  border-radius: 10px;
+}
+
+.card::-webkit-scrollbar-thumb {
+  background: #0000002c;
+  border-radius: 10px;
+}
+
+.card::-webkit-scrollbar-thumb:hover {
+  background: #1a2cb3;
+}
+
+/* Media Queries for Responsive Design */
+@media (min-width: 768px) {
+  .info-section-left, 
+  .info-section-right {
+      width: calc(50% - 1rem);
   }
 
-  .card1 {
-    background-color: #FE4626;
-  }
-  .card2 {
-    background-color: #283BE6;
-  }
-  .card3 {
-    background-color: #8558F9;
-  }
-  
-  /* Tittel for kortet */
-  .card h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-top: 0;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #ffffff;
-    padding-bottom: 0.5rem;
-  }
-  
-  /* Feature list styling optimalisert for 2:1 kort */
-  .feature-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-  }
-  
-  /* På mindre skjermer, bruk én kolonne */
-  @media (max-width: 480px) {
-    .feature-list {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  .feature-list li {
-    padding: 0.5rem 0 0.5rem 1.75rem;
-    position: relative;
-    font-size: 0.70rem;
-    line-height: 1.3;
-    border-bottom: none;
-  }
-    
-  /* Container for begge kortene */
   .cards-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  /* Responsiv justering for større skjermer */
-  @media (min-width: 992px) {
-    .cards-container {
-      flex-direction: row;
-    }
-    
-    .card {
-      max-width: calc(50% - 1rem);
-    }
-  }
-  
-  /* Styling for BSIKKERHET-kortet som kan ha flere punkter */
-  .card.standards {
-    overflow-y: auto;
-  }
-  
-  /* Styling for header med riktig farger */
-  .card-header {
-    display: flex;
-    align-items: center;
-  }
-  
-
-  
-  .card-header .icon svg {
-    width: 18px;
-    height: 18px;
-    fill: #ffffff;
-  }
-  
-  .start-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    display: block;
-    margin: 2rem auto 0;
-  }
-  
-  .start-button:hover {
-    background-color: #45a049;
-  }
-  
-  .feature-list {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .feature-list li {
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .feature-list li:last-child {
-    border-bottom: none;
-  }
-  
-  .feature-list li:before {
-    content: "✓";
-    color: #FE4626;
-    margin-right: 0.5rem;
-    font-weight: bold;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
   }
 
+  .card3 {
+      grid-column: span 2;
+      max-width: 100%;
+  }
+}
 
-  .card::-webkit-scrollbar {
-    width: 8px;
+@media (max-width: 767px) {
+  .start-page-header {
+      flex-direction: column;
+      height: auto;
   }
   
-  .card::-webkit-scrollbar-track {
-    background: #ffffff00;
-    border-radius: 10px;
+  .header-left, 
+  .header-right {
+      width: 100%;
+      padding: 1rem;
+  }
+
+  .background-header {
+      height: 100%;
+  }
+
+  .title {
+      font-size: clamp(16px, 10vw, 60px);
+      text-align: center;
+  }
+
+  .subtitle {
+      text-align: left;
+      font-size: 0.9rem;
   }
   
-  .card::-webkit-scrollbar-thumb {
-    background: #0000002c;
-    border-radius: 10px;
+  .start-test-btn {
+      width: 100%;
+      max-width: 247px;
+  }
+}
+
+@media (min-width: 992px) {
+  .cards-container {
+      grid-template-columns: repeat(3, 1fr);
   }
   
-  .card::-webkit-scrollbar-thumb:hover {
-    background: #1a2cb3;
+  .card3 {
+      grid-column: auto;
   }
+}
+
+/* Fix for extra small screens */
+@media (max-width: 480px) {
+  .subtitle {
+      font-size: 0.8rem;
+  }
+  
+  .card {
+      aspect-ratio: auto;
+      min-height: 200px;
+  }
+}

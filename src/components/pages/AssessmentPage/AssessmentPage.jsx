@@ -17,9 +17,7 @@ const AssessmentPage = () => {
 
   const cardColors = [
     'var(--blue)',
-    'var(--red)',
     'var(--purple)',
-    'var(--green)'
   ];
   
   // Funksjon for å velge en tilfeldig farge
@@ -136,7 +134,6 @@ const AssessmentPage = () => {
                   </div>
                 </motion.div>
                 
-                {shouldShowDivider && <div className="wavy-divider"></div>}
               </React.Fragment>
             );
           })}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SecurityImage from '../../../assets/images/18e468bc-bde8-43ad-88b6-459f92947e17_removalai_preview.png';
+import LOGO from '../../../assets/LOGO/BSI.svg';
 import './StartPage.css';
 
 const StartPage = () => {

@@ -56,8 +56,8 @@ const ResultsPage = () => {
       >
         <div className="flipped-content">
         <Header /> 
-          <header className="header">
-            <h1 className="title">Anbefalte sikkerhetstiltak</h1>
+          <header className="results-header">
+          <h1 className="results-header-title">SIKKERHETSTLTAK</h1>
             <div className={`score-display ${getScoreClass(securityScore)}`}>
               Din score: {securityScore}/100
             </div>

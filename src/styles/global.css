@@ -7,6 +7,15 @@
 
   --white: #FFFFFF;
   --black: #000000;
+
+  --white-fade: #f9f9f9;
+
+  --white-hover:#ffffffb2;
+
+  --nothing: #00000000;
+
+  --shadow: 4px 4px 5px rgba(0, 0, 0, 0.25);
+  --shadow-hover: 4px 4px 15px rgba(0, 0, 0, 0.25);
 }
 
 

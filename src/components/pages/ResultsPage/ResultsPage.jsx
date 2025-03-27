@@ -5,6 +5,7 @@ import { AssessmentContext } from '../../../context/AssessmentContext';
 import { categories } from '../../../data/categories';
 import { categoryIcons } from '../../../data/categories';
 import RecommendationDetail from '../../common/RecommendationDetail';
+import Header from '../../common/Header/Header';
 import './ResultsPage.css';
 
 const ResultsPage = () => {
@@ -54,6 +55,7 @@ const ResultsPage = () => {
         style={{ transformStyle: 'preserve-3d' }}
       >
         <div className="flipped-content">
+        <Header /> 
           <header className="header">
             <h1 className="title">Anbefalte sikkerhetstiltak</h1>
             <div className={`score-display ${getScoreClass(securityScore)}`}>

@@ -19,8 +19,7 @@ const AssessmentPage = () => {
     'var(--blue)',
     'var(--red)',
     'var(--purple)',
-    'var(--green)',
-    'var(--yellow)'
+    'var(--green)'
   ];
   
   // Funksjon for å velge en tilfeldig farge

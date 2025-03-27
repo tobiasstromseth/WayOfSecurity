@@ -25,6 +25,7 @@
   }
   
   .icon-container {
+    color: var(--white);
     width: 80px;
     height: 80px;
     margin-bottom: 1rem;

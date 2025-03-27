@@ -4,6 +4,7 @@ import { ThemeProvider } from "styled-components";
 import { AssessmentProvider } from "./context/AssessmentContext";
 import { Neo4jProvider } from "./context/Neo4jContext";
 import { theme } from "./styles/theme";
+import { sprites } from './components/common/SpritesLoader/SpritesLoader';
 import StartPage from "./components/pages/StartPage/StartPage";
 import AssessmentPage from "./components/pages/AssessmentPage/AssessmentPage";
 import ResultsPage from "./components/pages/ResultsPage/ResultsPage";

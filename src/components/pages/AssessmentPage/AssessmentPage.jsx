@@ -5,6 +5,7 @@ import { AssessmentContext } from '../../../context/AssessmentContext';
 import { categories, categoryIcons } from '../../../data/categories';
 import CategoryDetail from '../../common/Category/CategoryDetail';
 import Header from '../../common/Header/Header';
+import Background from '../../common/SpritesLoader/BackgroundSprites';
 import './AssessmentPage.css';
 
 const AssessmentPage = () => {
@@ -17,9 +18,7 @@ const AssessmentPage = () => {
 
   const cardColors = [
     'var(--blue)',
-    'var(--red)',
     'var(--purple)',
-    'var(--green)'
   ];
   
   // Funksjon for å velge en tilfeldig farge
@@ -91,15 +90,15 @@ const AssessmentPage = () => {
   
   return (
     <div className="page-container">
+      <Background numberOfSprites={20} />
       
       <Header /> 
-
+      <div className='content'>
       <div className="status-bar">
         <div>Kategorier gjennomført: {completedCategories.length}/{categories.length}</div>
         <div className="progress-bar">
           <div className="progress-fill" style={{ width: `${progress}%` }}></div>
         </div>
-        <div>Din sikkerhetsscore: {securityScore}/100</div>
       </div>
       
       <div className="categories-container">
@@ -136,7 +135,6 @@ const AssessmentPage = () => {
                   </div>
                 </motion.div>
                 
-                {shouldShowDivider && <div className="wavy-divider"></div>}
               </React.Fragment>
             );
           })}
@@ -162,6 +160,7 @@ const AssessmentPage = () => {
           standalone={true}
         />
       )}
+    </div>
     </div>
   );
 };

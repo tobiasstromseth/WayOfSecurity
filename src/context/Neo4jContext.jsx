@@ -1,10 +1,13 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import neo4j from "neo4j-driver";
 
+// Create context
 export const Neo4jContext = createContext();
 
+// Custom hook for using the Neo4j context
 export const useNeo4j = () => useContext(Neo4jContext);
 
+// Neo4j Provider component
 export const Neo4jProvider = ({ children }) => {
   const [driver, setDriver] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -21,15 +24,16 @@ export const Neo4jProvider = ({ children }) => {
         const NEO4J_PASSWORD =
           process.env.REACT_APP_NEO4J_PASSWORD || "password";
 
-        // Create driver with encryption disabled for development
+        // Create driver without explicitly setting encryption
+        // The protocol in the URI (bolt:// vs bolt+s://) will determine encryption
         neo4jDriver = neo4j.driver(
           NEO4J_URI,
           neo4j.auth.basic(NEO4J_USER, NEO4J_PASSWORD),
           {
-            encrypted: false,
             maxConnectionLifetime: 3 * 60 * 60 * 1000,
             maxConnectionPoolSize: 50,
             connectionAcquisitionTimeout: 2 * 60 * 1000,
+            // Do not set encrypted: false - let protocol in URI determine encryption
           }
         );
 

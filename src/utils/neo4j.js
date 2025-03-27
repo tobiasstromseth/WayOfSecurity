@@ -1,9 +1,9 @@
 import neo4j from "neo4j-driver";
 
 // Neo4j connection configuration
-const NEO4J_URI = process.env.REACT_APP_NEO4J_URI;
-const NEO4J_USER = process.env.REACT_APP_NEO4J_USER;
-const NEO4J_PASSWORD = process.env.REACT_APP_NEO4J_PASSWORD;
+const NEO4J_URI = process.env.REACT_APP_NEO4J_URI || "bolt://localhost:7687";
+const NEO4J_USER = process.env.REACT_APP_NEO4J_USER || "neo4j";
+const NEO4J_PASSWORD = process.env.REACT_APP_NEO4J_PASSWORD || "password";
 
 // Create a driver instance
 const driver = neo4j.driver(
@@ -13,7 +13,6 @@ const driver = neo4j.driver(
     maxConnectionLifetime: 3 * 60 * 60 * 1000,
     maxConnectionPoolSize: 50,
     connectionAcquisitionTimeout: 2 * 60 * 1000,
-    encrypted: false, // Add this line to disable encryption
   }
 );
 

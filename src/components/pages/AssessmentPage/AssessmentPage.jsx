@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { AssessmentContext } from '../../../context/AssessmentContext';
 import { categories, categoryIcons } from '../../../data/categories';
 import CategoryDetail from '../../common/Category/CategoryDetail';
+import Header from '../../common/Header/Header';
 import './AssessmentPage.css';
 
 const AssessmentPage = () => {
@@ -78,15 +79,9 @@ const AssessmentPage = () => {
   
   return (
     <div className="page-container">
-      <header className="header">
-        <div className="left-container-header">
-        <h1 className="header-title">BS<span className="exclamation">!</span>KKERHET</h1>
-        </div>
-        <div className="vikings-container">
-          <div style={{ fontSize: '40px' }}>👨‍🦰👨‍🦱👨‍🦳</div>
-        </div>
-      </header>
       
+      <Header /> 
+
       <div className="status-bar">
         <div>Kategorier gjennomført: {completedCategories.length}/{categories.length}</div>
         <div className="progress-bar">

@@ -7,7 +7,7 @@ import { categories, categoryIcons } from '../../../data/categories';
 import Question from '../Question';
 import ModalPortal from '../ModalPortal';
 
-const Overlay = styled(motion.div)`
+const Overlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -26,7 +26,7 @@ const Overlay = styled(motion.div)`
   overflow: auto;
 `;
 
-const DetailContainer = styled(motion.div)`
+const DetailContainer = styled.div`
   width: 90%;
   max-width: 800px;
   height: fit-content;
@@ -223,21 +223,13 @@ const CategoryDetail = memo(({ categoryId, onClose, standalone = false }) => {
   
   const icon = categoryIcons[category.icon] || null;
   
+  // I stedet for å bruke framer-motion for animasjoner i modalen,
+  // bruker vi en enkel statisk versjon uten animasjoner for å
+  // eliminere problemet med animasjoner som gjentas
   return (
     <ModalPortal>
-      <Overlay 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-      >
-        <DetailContainer
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.3 }}
-          onClick={handleStopPropagation}
-        >
+      <Overlay onClick={onClose}>
+        <DetailContainer onClick={handleStopPropagation}>
           <DetailHeader>
             <HeaderContent>
               {icon && <IconContainer>{icon}</IconContainer>}

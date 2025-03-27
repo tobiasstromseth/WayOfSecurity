@@ -14,6 +14,19 @@ const AssessmentPage = () => {
     isAssessmentComplete,
     getCategoryStatus
   } = useContext(AssessmentContext);
+
+  const cardColors = [
+    'var(--blue)',
+    'var(--red)',
+    'var(--purple)',
+    'var(--green)',
+    'var(--yellow)'
+  ];
+  
+  // Funksjon for å velge en tilfeldig farge
+  const getRandomColor = () => {
+    return cardColors[Math.floor(Math.random() * cardColors.length)];
+  };
   
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [visibleRows, setVisibleRows] = useState([]);
@@ -106,7 +119,11 @@ const AssessmentPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                 >
-                  <div className="category-card" onClick={() => handleCategoryClick(category.id)}>
+                  <div 
+                    className="category-card" 
+                    onClick={() => handleCategoryClick(category.id)}
+                    style={{ backgroundColor: getRandomColor() }}
+                  >
                     <div className="icon-container">
                       {categoryIcons[category.icon]}
                     </div>

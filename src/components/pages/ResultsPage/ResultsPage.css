@@ -78,12 +78,7 @@
     background-color: var(--status-error);
   }
   
-  .icon-container {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto 1rem;
-    color: #333;
-  }
+  
   
   .card-title {
     margin: 0;

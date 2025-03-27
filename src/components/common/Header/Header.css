@@ -14,7 +14,7 @@
   }
   
   .header-title {
-      color: #ffffff;
+      color: var(--white);
       font-size: 2rem;
       font-style: italic;
       font-weight: 900;
@@ -31,14 +31,14 @@
   }
   
   .header-btn {
-    color: #ffffff;
+    color: var(--white);
     font-size: 1rem;
     font-style: italic;
     font-weight: 900;
     letter-spacing: -0.06em;
     width: 100%;
     transform: skewX(-12deg);
-    background-color: #00000000;
+    background-color: var(--nothing);
     display: flex;           
     justify-content: center; 
     align-items: center;     
@@ -49,7 +49,7 @@
   }
 
   .header-btn p:hover {
-    color: #ffffffb2;
+    color: var(--white-hover);
   }
   
   .vikings-container {
@@ -64,7 +64,7 @@
   }
 
   .backround-header {
-    background-color: #283BE6;
+    background-color: var(--blue);
     position: absolute;
     top: 0;
     left: 0;

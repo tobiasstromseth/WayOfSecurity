@@ -74,7 +74,25 @@ body,
   margin: auto;
 }
 
+
+/*GLOBAL HEADER. Gjelder alle andre sider enn start page*/
 .header {
   height: 50px;
   background-color: var(--blue);
+}
+
+.left-container-header {
+  width: 33%;
+  height: 100%;
+  font-size: 20px;
+}
+
+.header-title {
+    color: #ffffff;
+    font-size: clamp(16px, 1.5vw, 120px);
+    font-style: italic;
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    width: 100%;
+    transform: skewX(-12deg);
 }

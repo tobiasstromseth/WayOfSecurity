@@ -3,7 +3,7 @@
 /*_________________________HEADER______________________________*/
 
 .start-page-header {
-    background-color: var(--brand-main);
+    background-color: var(--blue);
     color: var(--text-light);
     display: flex;
     justify-content: space-between;

@@ -79,8 +79,8 @@ const AssessmentPage = () => {
   return (
     <div className="page-container">
       <header className="header">
-        <div className="title-container">
-          <h1 className="title">12 VEIER TIL SIKKERHET</h1>
+        <div className="left-container-header">
+        <h1 className="header-title">BS<span className="exclamation">!</span>KKERHET</h1>
         </div>
         <div className="vikings-container">
           <div style={{ fontSize: '40px' }}>👨‍🦰👨‍🦱👨‍🦳</div>

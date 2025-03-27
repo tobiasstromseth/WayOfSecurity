@@ -13,4 +13,33 @@ services:
       - /app/node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_NEO4J_URI=bolt://neo4j:7687
+      - REACT_APP_NEO4J_USER=neo4j
+      - REACT_APP_NEO4J_PASSWORD=password
     restart: unless-stopped
+    depends_on:
+      - neo4j
+  
+  neo4j:
+    image: neo4j:5.15.0
+    container_name: wayofsecurity-neo4j
+    ports:
+      - "7474:7474" # HTTP
+      - "7687:7687" # Bolt
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - neo4j_import:/import
+      - neo4j_plugins:/plugins
+    environment:
+      - NEO4J_AUTH=neo4j/password
+      - NEO4J_dbms_memory_pagecache_size=1G
+      - NEO4J_dbms_memory_heap_initial__size=1G
+      - NEO4J_dbms_memory_heap_max__size=1G
+    restart: unless-stopped
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+  neo4j_import:
+  neo4j_plugins:

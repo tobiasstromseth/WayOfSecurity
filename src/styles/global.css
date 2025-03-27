@@ -27,7 +27,6 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  color: #333;
   background-color: #ffffff;
 }
 
@@ -81,4 +80,11 @@ body,
 .page-container {
   max-width: 1600px;
   margin: auto;
+}
+
+.icon-container {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  color: var(-white);
 }

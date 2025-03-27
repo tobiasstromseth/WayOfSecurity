@@ -93,13 +93,12 @@ const AssessmentPage = () => {
       <Background numberOfSprites={20} />
       
       <Header /> 
-
+      <div className='content'>
       <div className="status-bar">
         <div>Kategorier gjennomført: {completedCategories.length}/{categories.length}</div>
         <div className="progress-bar">
           <div className="progress-fill" style={{ width: `${progress}%` }}></div>
         </div>
-        <div>Din sikkerhetsscore: {securityScore}/100</div>
       </div>
       
       <div className="categories-container">
@@ -161,6 +160,7 @@ const AssessmentPage = () => {
           standalone={true}
         />
       )}
+    </div>
     </div>
   );
 };

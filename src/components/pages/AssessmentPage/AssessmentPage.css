@@ -1,3 +1,9 @@
+.content {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -137,18 +143,20 @@
   }
   
   .status-bar {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto 2rem;
+    width: calc(100% - 4rem);
+    max-width: 100%;
+    margin: 0rem 2rem 1.5rem;
     padding: 1rem;
-    background-color: var(--white-fade);
-    border-radius: 8px;
+    background-color: var(--blue);
+    border-radius: 0px 0px 8px 8px;
     text-align: center;
+    box-sizing: border-box;
+    color: var(--white);
   }
   
   .progress-bar {
     height: 10px;
-    background-color: var(--white);
+    background-color: var(--white-hover);
     border-radius: 5px;
     margin: 0.5rem 0;
     overflow: hidden;
@@ -156,7 +164,7 @@
   
   .progress-fill {
     height: 100%;
-    background-color: var(--blue);
+    background-color: var(--white);
     border-radius: 5px;
     transition: width 0.5s ease;
   }

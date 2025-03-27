@@ -15,7 +15,7 @@ const Background = ({ numberOfSprites = 10 }) => {
   const animationFrameRef = useRef();
   const containerRef = useRef();
 
-  // Initialiser sprites med posisjon og hastighet
+  // Initialize sprites with position and velocity
   useEffect(() => {
     const initialSprites = Array.from({ length: numberOfSprites }, () => ({
       id: Math.random(),
@@ -24,75 +24,45 @@ const Background = ({ numberOfSprites = 10 }) => {
       y: Math.random() * window.innerHeight,
       size: Math.random() * (100 - 50) + 50,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      velocityX: (Math.random() - 0.5) * 2,
-      velocityY: (Math.random() - 0.5) * 2,
+      velocityX: (Math.random() - 0.5) * 1, // Reduced velocity for less CPU usage
+      velocityY: (Math.random() - 0.5) * 1, // Reduced velocity for less CPU usage
       rotation: Math.random() * 360,
-      rotationSpeed: (Math.random() - 0.5) * 2,
+      rotationSpeed: (Math.random() - 0.5) * 1, // Reduced rotation speed
       opacity: Math.random() * (0.8 - 0.2) + 0.2,
     }));
     setSprites(initialSprites);
   }, [numberOfSprites]);
 
-  // Håndterer kollisjon mellom to sprites
-  const handleCollision = (sprite1, sprite2) => {
-    // Enkel elastisk kollisjon
-    const tempVx = sprite1.velocityX;
-    const tempVy = sprite1.velocityY;
-    
-    sprite1.velocityX = sprite2.velocityX;
-    sprite1.velocityY = sprite2.velocityY;
-    sprite2.velocityX = tempVx;
-    sprite2.velocityY = tempVy;
-
-    // Legg til litt tilfeldighet i rotasjonen ved kollisjon
-    sprite1.rotationSpeed = (Math.random() - 0.5) * 2;
-    sprite2.rotationSpeed = (Math.random() - 0.5) * 2;
-  };
-
-  // Animasjonsloop
+  // Animation loop
   useEffect(() => {
     const animate = () => {
       setSprites(currentSprites => {
         return currentSprites.map(sprite => {
           let { x, y, velocityX, velocityY, rotation, rotationSpeed, size } = sprite;
           
-          // Oppdater posisjon
+          // Update position
           x += velocityX;
           y += velocityY;
           rotation += rotationSpeed;
 
-          // Sjekk kollisjon med kanter
-          if (x <= 0 || x >= window.innerWidth - size) {
-            velocityX *= -1;
-            rotationSpeed = (Math.random() - 0.5) * 2;
+          // Wrap around screen edges instead of collision
+          if (x < -size) {
+            x = window.innerWidth;
+          } else if (x > window.innerWidth) {
+            x = -size;
           }
-          if (y <= 0 || y >= window.innerHeight - size) {
-            velocityY *= -1;
-            rotationSpeed = (Math.random() - 0.5) * 2;
+          
+          if (y < -size) {
+            y = window.innerHeight;
+          } else if (y > window.innerHeight) {
+            y = -size;
           }
-
-          // Sjekk kollisjon med andre sprites
-          currentSprites.forEach(otherSprite => {
-            if (sprite.id !== otherSprite.id) {
-              const dx = x - otherSprite.x;
-              const dy = y - otherSprite.y;
-              const distance = Math.sqrt(dx * dx + dy * dy);
-              const minDistance = (size + otherSprite.size) / 2;
-
-              if (distance < minDistance) {
-                handleCollision(sprite, otherSprite);
-              }
-            }
-          });
 
           return {
             ...sprite,
             x,
             y,
-            velocityX,
-            velocityY,
-            rotation,
-            rotationSpeed
+            rotation
           };
         });
       });
@@ -109,32 +79,35 @@ const Background = ({ numberOfSprites = 10 }) => {
     };
   }, []);
 
-  // Oppdater ved vindusendring
+  // Update on window resize
   useEffect(() => {
     const handleResize = () => {
+      // Simple resize handler that keeps sprites visible
       setSprites(currentSprites => 
-        currentSprites.map(sprite => ({
-          ...sprite,
-          x: Math.min(sprite.x, window.innerWidth - sprite.size),
-          y: Math.min(sprite.y, window.innerHeight - sprite.size)
-        }))
+        currentSprites.map(sprite => {
+          // If sprite is off-screen after resize, place it back within view
+          let x = sprite.x;
+          let y = sprite.y;
+          
+          if (x > window.innerWidth) {
+            x = window.innerWidth - sprite.size;
+          }
+          if (y > window.innerHeight) {
+            y = window.innerHeight - sprite.size;
+          }
+          
+          return {
+            ...sprite,
+            x,
+            y
+          };
+        })
       );
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  const getHueRotation = (color) => {
-    switch(color) {
-      case 'var(--blue)':   return '240deg';
-      case 'var(--red)':    return '0deg';
-      case 'var(--purple)': return '270deg';
-      case 'var(--green)':  return '120deg';
-      case 'var(--yellow)': return '60deg';
-      default:              return '0deg';
-    }
-  };
 
   return (
     <div ref={containerRef} className="background-sprites">

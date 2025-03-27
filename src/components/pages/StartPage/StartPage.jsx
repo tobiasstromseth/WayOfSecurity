@@ -12,7 +12,7 @@ const StartPage = () => {
   
   return (
     <div className="page-container">
-      <header className="header">
+      <header className="start-page-header">
         <div className="header-left">
         <h1 className="title">BS<span className="exclamation">!</span>KKERHET</h1>
         <h2 className="subtitle">Velkommen til Basline sikkerhet (BS!KKERHET) - verktøyet som gjør digital sikkerhet enkelt for deg og din bedrift. 

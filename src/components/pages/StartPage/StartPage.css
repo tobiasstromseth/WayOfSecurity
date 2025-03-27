@@ -2,7 +2,7 @@
 /*############################################################*/
 /*_________________________HEADER______________________________*/
 
-.header {
+.start-page-header {
     background-color: var(--brand-main);
     color: var(--text-light);
     display: flex;

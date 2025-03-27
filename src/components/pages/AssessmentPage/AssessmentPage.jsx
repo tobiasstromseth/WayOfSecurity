@@ -81,9 +81,6 @@ const AssessmentPage = () => {
       <header className="header">
         <div className="title-container">
           <h1 className="title">12 VEIER TIL SIKKERHET</h1>
-          <p className="header-description">
-            Dette verktøyet kombinerer ledende cybersikkerhets-standarder fra CIS, NSM og NIST i en brukervennlig løsning for små bedrifter uten IT-ekspertise. Det forener teori med praktiske tiltak for rask risikoidentifisering og konkrete forbedringer.
-          </p>
         </div>
         <div className="vikings-container">
           <div style={{ fontSize: '40px' }}>👨‍🦰👨‍🦱👨‍🦳</div>

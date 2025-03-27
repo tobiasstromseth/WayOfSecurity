@@ -160,3 +160,26 @@
     border-radius: 5px;
     transition: width 0.5s ease;
   }
+
+  
+  /* Spesifikke stiler for bakgrunnssprites i assessment-siden */
+  .assessment-bg-sprites {
+    pointer-events: none;
+    z-index: 0; /* Sett til 0 for å være bak innholdet men foran bakgrunnsfargen */
+  }
+  
+  /* Sørg for at andre elementer er over bakgrunnssprites */
+  .status-bar,
+  .categories-container,
+  .button-container,
+  .category-card {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Gjør bakgrunnssprites mer transparente på mindre skjermer */
+  @media (max-width: 768px) {
+    .assessment-bg-sprites .background-sprite {
+      opacity: 0.1 !important; /* Overstyr inline-stilen */
+    }
+  }

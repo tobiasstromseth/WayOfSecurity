@@ -5,6 +5,7 @@ import { AssessmentContext } from '../../../context/AssessmentContext';
 import { categories, categoryIcons } from '../../../data/categories';
 import CategoryDetail from '../../common/Category/CategoryDetail';
 import Header from '../../common/Header/Header';
+import Background from '../../common/SpritesLoader/BackgroundSprites';
 import './AssessmentPage.css';
 
 const AssessmentPage = () => {
@@ -89,6 +90,7 @@ const AssessmentPage = () => {
   
   return (
     <div className="page-container">
+      <Background numberOfSprites={20} />
       
       <Header /> 
 

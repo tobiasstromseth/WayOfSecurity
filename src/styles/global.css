@@ -80,6 +80,7 @@ body,
 .page-container {
   max-width: 1600px;
   margin: auto;
+  position: relative;
 }
 
 .icon-container {

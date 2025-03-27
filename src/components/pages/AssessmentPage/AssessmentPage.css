@@ -6,7 +6,7 @@
   }
   
   .category-card {
-    background-color: white;
+    background-color: var(--purple);
     border-radius: 8px;
     box-shadow: var(--shadow);
     padding: 1.5rem;
@@ -31,19 +31,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #333;
   }
   
   .category-title {
     font-size: 1.2rem;
     margin: 0;
     margin-bottom: 0.5rem;
-    color: var(--black);
+    color: var(--white);
   }
   
   .category-description {
     font-size: 0.85rem;
-    color: var(--black);
+    color: var(--white);
     line-height: 1.4;
     margin-bottom: 0.5rem;
     display: -webkit-box;
@@ -59,7 +58,7 @@
     padding: 0.4rem;
     border-radius: 20px;
     text-align: center;
-    color: var(--black);
+    color: var(--white);
     font-weight: normal;
   }
   

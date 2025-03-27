@@ -1,18 +1,19 @@
-import neo4j from 'neo4j-driver';
+import neo4j from "neo4j-driver";
 
 // Neo4j connection configuration
-const NEO4J_URI = process.env.REACT_APP_NEO4J_URI || 'bolt://localhost:7687';
-const NEO4J_USER = process.env.REACT_APP_NEO4J_USER || 'neo4j';
-const NEO4J_PASSWORD = process.env.REACT_APP_NEO4J_PASSWORD || 'password';
+const NEO4J_URI = process.env.REACT_APP_NEO4J_URI;
+const NEO4J_USER = process.env.REACT_APP_NEO4J_USER;
+const NEO4J_PASSWORD = process.env.REACT_APP_NEO4J_PASSWORD;
 
 // Create a driver instance
 const driver = neo4j.driver(
   NEO4J_URI,
   neo4j.auth.basic(NEO4J_USER, NEO4J_PASSWORD),
   {
-    maxConnectionLifetime: 3 * 60 * 60 * 1000, // 3 hours
+    maxConnectionLifetime: 3 * 60 * 60 * 1000,
     maxConnectionPoolSize: 50,
-    connectionAcquisitionTimeout: 2 * 60 * 1000, // 2 minutes
+    connectionAcquisitionTimeout: 2 * 60 * 1000,
+    encrypted: false, // Add this line to disable encryption
   }
 );
 
@@ -31,7 +32,7 @@ export const executeCypher = async (cypher, params = {}) => {
     const result = await session.run(cypher, params);
     return result.records;
   } catch (error) {
-    console.error('Neo4j Query Error:', error);
+    console.error("Neo4j Query Error:", error);
     throw error;
   } finally {
     await session.close();
@@ -42,10 +43,10 @@ export const executeCypher = async (cypher, params = {}) => {
 const verifyConnection = async () => {
   const session = getSession();
   try {
-    await session.run('RETURN 1');
-    console.log('Connected to Neo4j database');
+    await session.run("RETURN 1");
+    console.log("Connected to Neo4j database");
   } catch (error) {
-    console.error('Failed to connect to Neo4j:', error);
+    console.error("Failed to connect to Neo4j:", error);
   } finally {
     await session.close();
   }

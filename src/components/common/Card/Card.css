@@ -244,3 +244,47 @@
       margin-top: 10px;
     }
   }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .card-id {
+    font-size: 0.8rem;
+    color: #666;
+  }
+  
+  .points-section {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+  }
+  
+  .points-label {
+    margin-right: 5px;
+    font-size: 0.8rem;
+  }
+  
+  .points-value {
+    font-size: 1.1rem;
+  }
+  
+  .points-high {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .points-medium {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .points-low {
+    background-color: #f8d7da;
+    color: #721c24;
+  }

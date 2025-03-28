@@ -4,317 +4,380 @@ import { motion } from 'framer-motion';
 import { useNeo4j } from '../../../context/Neo4jContext';
 import './Card.css';
 
-const CardFactory = () => {
-  const [categories, setCategories] = useState([]);
-  const [cards, setCards] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [dataFetched, setDataFetched] = useState(false);
-  
-  // Get the context value which contains both the driver and dbQueries
-  const { dbQueries, isConnected, isInitializing, connectionError } = useNeo4j();
+/**
+ * DATAMODELL OVERSIKT
+ * 
+ * Kort (Card):
+ * - id: Numerisk ID (samme som kategori-ID)
+ * - category: Kategori-objekt med:
+ *   - id: Numerisk ID
+ *   - text: Kategoriens navn/tekst
+ *   - description: Kategoriens beskrivelse
+ * - question: Spørsmål-objekt med:
+ *   - text: Spørsmålstekst
+ * - alternatives: Liste av Alternativ-objekter, hvor hvert har:
+ *   - text: Alternativets tekst
+ *   - description: Alternativets beskrivelse
+ *   - what: "Hva" informasjon om alternativet
+ *   - how: "Hvordan" informasjon om alternativet
+ * - points: Poengverdi for kortet
+ */
 
-  // Fix: Added function keyword to make this a proper function
-  const structureCardData = function(records) {
-    // Structure the data in a more organized way
-    let category = null;
-    const question = {};
-    const alternatives = [];
+// ------------------------------
+// HJELPEFUNKSJONER
+// ------------------------------
+
+/**
+ * Hjelper for å trekke ut numerisk ID fra Neo4j Integer-objekter
+ */
+const extractNumericId = (id) => {
+  if (id && typeof id === 'object' && 'low' in id) {
+    return id.low;
+  }
+  return parseInt(id);
+};
+
+// ------------------------------
+// DATAMODELLER
+// ------------------------------
+
+/**
+ * Kategori-modell
+ * Inneholder:
+ * - id: Numerisk ID
+ * - text: Kategoriens tekst/navn
+ * - description: Kategoriens beskrivelse
+ */
+class Category {
+  constructor(data) {
+    this.id = extractNumericId(data.id);
+    this.text = data.text || '';
+    this.description = data.description || '';
+  }
+}
+
+/**
+ * Spørsmål-modell
+ * Inneholder:
+ * - text: Spørsmålstekst
+ */
+class Question {
+  constructor(data) {
+    this.text = data.text || '';
+  }
+}
+
+/**
+ * Alternativ-modell
+ * Inneholder:
+ * - text: Alternativets tekst
+ * - description: Alternativets beskrivelse
+ * - what: "Hva" informasjon for implementering
+ * - how: "Hvordan" informasjon for implementering
+ */
+class Alternative {
+  constructor(data) {
+    this.text = data.text || '';
+    this.description = data.description || '';
+    this.what = data.what || '';
+    this.how = data.how || '';
+  }
+}
+
+/**
+ * Kort-modell - Hoved datacontainer
+ * Inneholder:
+ * - id: Kortets ID (samme som kategori-ID)
+ * - category: Kategori-objekt
+ * - question: Spørsmål-objekt
+ * - alternatives: Liste av alternativer
+ * - points: Beregnet poengverdi
+ */
+class Card {
+  constructor(data) {
+    // The card ID is the same as the category ID
+    this.id = data.category ? data.category.id : null;
+    this.category = data.category || null;
+    this.question = data.question || null;
+    this.alternatives = data.alternatives || [];
+    this.points = data.points || 0;
+  }
+
+  /**
+   * Oppretter et kort fra Neo4j-records
+   * @param {Array} records - Data fra Neo4j-spørringer
+   * @returns {Card|null} - Nytt kort-objekt eller null
+   */
+  static fromRecords(records) {
+    if (!records || records.length === 0) return null;
+    
+    // Extract initial category data from first record
+    const firstRecord = records[0].toObject();
+    
+    // Opprett kategori fra første record
+    const category = new Category({
+      id: firstRecord.id,
+      text: firstRecord.kategori_tekst,
+      description: firstRecord.kategori_beskrivelse
+    });
+    
+    // Opprett spørsmål fra første record
+    const question = new Question({
+      text: firstRecord.sporsmal_tekst
+    });
+    
+    // Samle alternativer fra alle records
+    const alternativesMap = new Map();
     
     records.forEach(record => {
       const data = record.toObject();
-      
-      // Set category info (only done once)
-      if (!category) {
-        category = {
-          id: data.id,
-          text: data.kategori_tekst,
-          description: data.kategori_beskrivelse
-        };
-      }
-      
-      // Set question info (only done once)
-      if (!question.text) {
-        question.text = data.sporsmal_tekst;
-      }
-      
-      // Add alternative if it doesn't already exist
       const altText = data.alternativ_tekst;
-      if (!alternatives.some(alt => alt.text === altText)) {
-        alternatives.push({
+      
+      if (altText && !alternativesMap.has(altText)) {
+        alternativesMap.set(altText, new Alternative({
           text: altText,
           description: data.alternativ_beskrivelse,
           what: data.alternativ_hva,
           how: data.alternativ_hvordan
-        });
+        }));
       }
     });
     
-    // Build the final card structure
-    return {
-      category: category,
-      question: question,
-      alternatives: alternatives
-    };
-  };
+    const alternatives = Array.from(alternativesMap.values());
+    
+    // Opprett og returner kortet
+    return new Card({ category, question, alternatives });
+  }
+}
+
+// ------------------------------
+// DATATJENESTER
+// ------------------------------
+
+/**
+ * Kortdatatjeneste
+ * Håndterer henting og behandling av kortdata
+ */
+class CardDataService {
+  constructor(dbQueries) {
+    this.dbQueries = dbQueries;
+    this.dataFetched = false;
+    this.cards = [];
+  }
   
-  // Use useCallback to avoid unnecessary re-renders
-  const fetchData = useCallback(async () => {
-    // Don't fetch again if we already have data
-    if (dataFetched) return;
-    
-    console.log("Neo4j connection status:", { isInitializing, isConnected, connectionError });
-    console.log("Context values:", { dbQueries: !!dbQueries });
-    
-    if (isInitializing) {
-      console.log("Neo4j connection is initializing...");
-      return;
+  /**
+   * Beregner poeng basert på kort-ID med ikke-lineær distribusjon
+   */
+  calculatePoints(cardId, minId, maxId) {
+    // If there's only one card or invalid IDs
+    if (minId === maxId || cardId === undefined || minId === undefined || maxId === undefined) {
+      return 33; // Default to max points
     }
     
-    if (!isConnected || connectionError) {
-      setError(`Database connection error: ${connectionError}`);
-      setLoading(false);
-      return;
+    // Normalize the ID (0 to 1 range, where 0 = minId and 1 = maxId)
+    const normalizedId = (cardId - minId) / (maxId - minId);
+    
+    // Non-linear distribution using a power function
+    // This will give more points to lower IDs with a non-linear curve
+    const pointsValue = 33 - (normalizedId * normalizedId * 25);
+    
+    // Round to nearest integer
+    return Math.round(pointsValue);
+  }
+  
+  /**
+   * Henter alle kort fra databasen
+   * @returns {Object} - Objekt med kort-array
+   */
+  async fetchAllCards() {
+    if (this.dataFetched) return { cards: this.cards };
+    
+    if (!this.dbQueries) {
+      throw new Error("Database queries object is not available");
     }
     
-    if (!dbQueries) {
-      setError("Database queries object is not available");
-      setLoading(false);
-      return;
-    }
+    // Fetch all category IDs
+    const categoryIds = await this.dbQueries.getAllCategoryIds();
     
-    try {
-      setLoading(true);
-      
-      // Get all category IDs using the dbQueries from context
-      console.log("Fetching category IDs...");
-      const categoryIds = await dbQueries.getAllCategoryIds();
-      console.log("Category IDs:", categoryIds);
-      
-      // Get card data for each category ID
-      const fetchedCards = [];
-      const fetchedCategories = [];
-      
-      // Process each category ID
-      for (const categoryId of categoryIds) {
-        try {
-          // Get card data for this category ID
-          console.log(`Fetching card data for category ID: ${categoryId}`);
-          const cardsData = await dbQueries.getCardById(categoryId);
-          
-          // Fix: Use the structureCardData function to process the raw data
-          const cardData = structureCardData(cardsData);
-          
-          if (cardData) {
-            fetchedCards.push(cardData);
-            
-            // Use the category data from the structured response
-            if (cardData.category) {
-              fetchedCategories.push({
-                id: cardData.category.id,
-                name: cardData.category.text || `Category ${categoryId}`
-              });
-            } else {
-              // Fallback for old data structure
-              fetchedCategories.push({
-                id: categoryId,
-                name: `Category ${categoryId}`
-              });
-            }
-          }
-        } catch (cardError) {
-          console.error(`Error fetching card for category ID ${categoryId}:`, cardError);
-          // Continue with other categories even if one fails
+    const fetchedCards = [];
+    
+    // Process each category ID
+    for (const categoryId of categoryIds) {
+      try {
+        const cardsData = await this.dbQueries.getCardById(categoryId);
+        const card = Card.fromRecords(cardsData);
+        
+        if (card) {
+          fetchedCards.push(card);
         }
+      } catch (error) {
+        console.error(`Error fetching card for category ID ${categoryId}:`, error);
       }
-      
-      setCategories(fetchedCategories);
-      setCards(fetchedCards);
-      
-      // Mark that we have fetched data
-      setDataFetched(true);
-      setError(null);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [dbQueries, isConnected, isInitializing, connectionError, dataFetched]);
-  
-  // Run fetchData only when needed
-  useEffect(() => {
-    // Only run when dbQueries is available and we are connected
-    if (dbQueries && isConnected && !isInitializing && !dataFetched) {
-      fetchData();
-    }
-  }, [dbQueries, isConnected, isInitializing, fetchData, dataFetched]);
-  
-  // Add the ability to manually refresh data when needed
-  const refreshData = () => {
-    setDataFetched(false); // This will trigger a new fetchData()
-  };
-  
-  // Animation variants for cards
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
-  
-  // Helper function to render text with fallback
-  const renderText = (text, fallback = '') => {
-    return text || fallback;
-  };
-  
-  // Render a property with label
-  const renderProperty = (label, value) => {
-    if (value === null || value === undefined || value === '') {
-      return null;
     }
     
+    // Find min and max IDs for point calculation
+    const cardIds = fetchedCards.map(card => card.id).filter(id => id !== null && !isNaN(id));
+    
+    let minId = 0;
+    let maxId = 0;
+    
+    if (cardIds.length > 0) {
+      minId = Math.min(...cardIds);
+      if (minId < 0) {
+        minId = 0;
+      }
+      maxId = Math.max(...cardIds);
+    }
+    
+    console.log("MinID:", minId);
+    console.log("MaxID:", maxId);
+    
+    // Calculate points for each card
+    fetchedCards.forEach(card => {
+      if (card.id !== null) {
+        card.points = this.calculatePoints(card.id, minId, maxId);
+      }
+    });
+    
+    this.cards = fetchedCards;
+    this.dataFetched = true;
+    
+    return { cards: this.cards };
+  }
+  
+  /**
+   * Nullstiller datahentingsstatus
+   */
+  resetFetchState() {
+    this.dataFetched = false;
+  }
+}
+
+// ------------------------------
+// PRESENTER/RENDERER
+// ------------------------------
+
+/**
+ * Renderer-klasse for kort
+ * Håndterer visning av kortets komponenter
+ */
+class CardRenderer {
+  /**
+   * Renderer tekst, med fallback hvis tom
+   */
+  static renderText(text, fallback = '') {
+    return text || fallback;
+  }
+  
+  /**
+   * Renderer en egenskap (label-value par)
+   */
+  static renderProperty(label, value) {
+    if (!value) return null;
     return (
       <div className="card-property">
         <strong>{label}:</strong>{' '}
         <span>{value}</span>
       </div>
     );
-  };
+  }
   
-  // Render a single alternative
-  const renderAlternative = (alternative, index) => {
-    return (
-      <div key={index} className="alternative">
-        <h5>Alternative {index + 1}: {renderText(alternative.text)}</h5>
-        <div className="alternative-content">
-          {renderProperty('Description', alternative.description)}
-          {renderProperty('What to implement', alternative.what)}
-          {renderProperty('How to implement', alternative.how)}
-        </div>
-      </div>
-    );
-  };
-  
-  // Render category information
-  const renderCategory = (category) => {
+  /**
+   * Renderer kategoriseksjonen
+   * Inneholder:
+   * - Kategorititel
+   * - Kategoribeskrivelse
+   */
+  static renderCategorySection(category) {
     if (!category) return null;
     
     return (
       <div className="category-section">
-        <h3>{renderText(category.text, 'Unnamed Category')}</h3>
-        {renderProperty('Description', category.description)}
+        <h3>{CardRenderer.renderText(category.text, 'Unnamed Category')}</h3>
+        {CardRenderer.renderProperty('Description', category.description)}
       </div>
     );
-  };
+  }
   
-  // Render question information
-  const renderQuestion = (question) => {
+  /**
+   * Renderer poengdelene på kortet
+   * Poengverdi med fargekoding basert på nivå
+   */
+  static renderPointsSection(points) {
+    if (points === undefined || points === null) return null;
+    
+    let pointsClass = 'points-low';
+    if (points >= 25) {
+      pointsClass = 'points-high';
+    } else if (points >= 15) {
+      pointsClass = 'points-medium';
+    }
+    
+    return (
+      <div className={`points-section ${pointsClass}`}>
+        <span className="points-label">Points:</span>
+        <span className="points-value">{points}</span>
+      </div>
+    );
+  }
+  
+  /**
+   * Renderer spørsmålseksjonen
+   * Inneholder spørsmålstekst
+   */
+  static renderQuestionSection(question) {
     if (!question) return null;
     
     return (
       <div className="question-section">
         <h4>Question:</h4>
-        <p>{renderText(question.text, 'No question text available')}</p>
+        <p>{CardRenderer.renderText(question.text, 'No question text available')}</p>
       </div>
     );
-  };
+  }
   
-  // Render alternatives section
-  const renderAlternatives = (alternatives) => {
-    if (!alternatives || !Array.isArray(alternatives) || alternatives.length === 0) {
-      return null;
-    }
+  /**
+   * Renderer alternativer
+   * For hvert alternativ vises:
+   * - Tekst
+   * - Beskrivelse
+   * - "Hva" informasjon
+   * - "Hvordan" informasjon
+   */
+  static renderAlternativesSection(alternatives) {
+    if (!alternatives || alternatives.length === 0) return null;
     
     return (
       <div className="alternatives-section">
         <h4>Alternatives:</h4>
-        {alternatives.map((alternative, index) => 
-          renderAlternative(alternative, index)
-        )}
+        {alternatives.map((alt, idx) => (
+          <div key={idx} className="alternative">
+            <h5>Alternative {idx + 1}: {CardRenderer.renderText(alt.text)}</h5>
+            <div className="alternative-content">
+              {CardRenderer.renderProperty('Description', alt.description)}
+              {CardRenderer.renderProperty('What to implement', alt.what)}
+              {CardRenderer.renderProperty('How to implement', alt.how)}
+            </div>
+          </div>
+        ))}
       </div>
     );
-  };
+  }
   
-  // Determine if card is using new structured format
-  const isStructuredCard = (card) => {
-    return card && card.category && card.question && card.alternatives;
-  };
-  
-  // Handle legacy card format for backward compatibility
-  const renderLegacyCard = (card) => {
-    // Extract main properties and alternatives from flat structure
-    const mainProperties = Object.keys(card).filter(key => 
-      !key.startsWith('alternativ_') && key !== 'id'
-    );
+  /**
+   * Renderer et helt kort
+   * Struktur:
+   * - Header (ID og poeng)
+   * - Kategori
+   * - Spørsmål
+   * - Alternativer
+   */
+  static renderCard(card, index) {
+    const cardVariants = {
+      hidden: { opacity: 0, y: 20 },
+      visible: { opacity: 1, y: 0 }
+    };
     
-    // Extract alternatives from legacy format
-    const alternatives = [];
-    const alternativeKeys = Object.keys(card).filter(key => key.startsWith('alternativ_'));
-    
-    // Check if we have alternativ_tekst field
-    if (card.alternativ_tekst) {
-      // Handle array of alternatives
-      if (Array.isArray(card.alternativ_tekst)) {
-        card.alternativ_tekst.forEach((text, idx) => {
-          const alternative = { tekst: text };
-          
-          alternativeKeys.forEach(key => {
-            if (key !== 'alternativ_tekst' && Array.isArray(card[key]) && card[key][idx]) {
-              alternative[key.replace('alternativ_', '')] = card[key][idx];
-            }
-          });
-          
-          alternatives.push(alternative);
-        });
-      } else {
-        // Single alternative
-        const alternative = { tekst: card.alternativ_tekst };
-        
-        alternativeKeys.forEach(key => {
-          if (key !== 'alternativ_tekst') {
-            alternative[key.replace('alternativ_', '')] = card[key];
-          }
-        });
-        
-        alternatives.push(alternative);
-      }
-    }
-    
-    return (
-      <>
-        <h3>{card.kategori_tekst || card.title || `Card ${card.id}`}</h3>
-        
-        {/* Main properties */}
-        <div className="card-main-content">
-          {mainProperties.map(key => {
-            if (card[key] === null || card[key] === undefined) {
-              return null;
-            }
-            
-            return renderProperty(key, card[key]);
-          })}
-        </div>
-        
-        {/* Legacy alternatives section */}
-        <div className="alternatives-section">
-          <h4>Alternatives:</h4>
-          {alternatives.map((alt, idx) => (
-            <div key={idx} className="alternative">
-              <h5>Alternative {idx + 1}: {alt.tekst}</h5>
-              {Object.entries(alt).map(([key, value]) => {
-                if (key !== 'tekst') {
-                  return renderProperty(key, value);
-                }
-                return null;
-              })}
-            </div>
-          ))}
-        </div>
-      </>
-    );
-  };
-  
-  // Render a single card with all available information
-  const renderCard = (card, index) => {
     return (
       <motion.div
         key={card.id || index}
@@ -323,29 +386,96 @@ const CardFactory = () => {
         initial="hidden"
         animate="visible"
         transition={{ duration: 0.3, delay: index * 0.1 }}
-        // Removed inline styles - now using CSS classes
       >
-        {isStructuredCard(card) ? (
-          // New structured card format
-          <>
-            {renderCategory(card.category)}
-            {renderQuestion(card.question)}
-            {renderAlternatives(card.alternatives)}
-          </>
-        ) : (
-          // Legacy card format
-          renderLegacyCard(card)
-        )}
+        <div className="card-header">
+          {card.id !== null && <div className="card-id">ID: {card.id}</div>}
+          {CardRenderer.renderPointsSection(card.points)}
+        </div>
+        {CardRenderer.renderCategorySection(card.category)}
+        {CardRenderer.renderQuestionSection(card.question)}
+        {CardRenderer.renderAlternativesSection(card.alternatives)}
       </motion.div>
     );
+  }
+}
+
+// ------------------------------
+// HOVEDKOMPONENT
+// ------------------------------
+
+/**
+ * CardFactory-komponenten
+ * Hovedkomponent som håndterer henting og visning av kort
+ */
+const CardFactory = () => {
+  const [cards, setCards] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [cardService, setCardService] = useState(null);
+  
+  const { dbQueries, isConnected, isInitializing, connectionError } = useNeo4j();
+  
+  // Initialize card service
+  useEffect(() => {
+    if (dbQueries) {
+      setCardService(new CardDataService(dbQueries));
+    }
+  }, [dbQueries]);
+  
+  // Fetch data from Neo4j database
+  const fetchData = useCallback(async () => {
+    console.log("Neo4j connection status:", { isInitializing, isConnected, connectionError });
+    
+    if (isInitializing) return;
+    
+    if (!isConnected || connectionError) {
+      setError(`Database connection error: ${connectionError}`);
+      setLoading(false);
+      return;
+    }
+    
+    if (!cardService) {
+      setError("Card service is not available");
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      const { cards: fetchedCards } = await cardService.fetchAllCards();
+      
+      setCards(fetchedCards);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [cardService, isConnected, isInitializing, connectionError]);
+  
+  // Run fetchData when necessary
+  useEffect(() => {
+    if (cardService && isConnected && !isInitializing) {
+      fetchData();
+    }
+  }, [cardService, isConnected, isInitializing, fetchData]);
+  
+  // Manual data refresh
+  const refreshData = () => {
+    if (cardService) {
+      cardService.resetFetchState();
+      fetchData();
+    }
   };
   
+  // Main render
   return (
     <div className="card-factory">
       {loading ? (
         <div className="loading-container">
           <p>Loading data from Neo4j database...</p>
-          {/* You could add a spinner here */}
         </div>
       ) : error ? (
         <div className="error-container">
@@ -355,16 +485,16 @@ const CardFactory = () => {
       ) : cards.length > 0 ? (
         <div className="cards-container">
           <div className="cards-header">
-            <h2>Cards by Category</h2>
+            <h2>Cards</h2>
             <button onClick={refreshData} className="refresh-button">Refresh Data</button>
           </div>
           
           <div className="categories-summary">
-            <p>Found {categories.length} categories with {cards.length} cards</p>
+            <p>Found {cards.length} cards</p>
           </div>
           
           <div className="cards-grid">
-            {cards.map((card, index) => renderCard(card, index))}
+            {cards.map((card, index) => CardRenderer.renderCard(card, index))}
           </div>
         </div>
       ) : (

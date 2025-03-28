@@ -1,6 +1,7 @@
 .content {
+  margin-top: 2.5rem;
   width: 100%;
-  max-width: 100%;
+  max-width: 1600px;
   box-sizing: border-box;
 }
 
@@ -104,17 +105,16 @@
   .button-container {
     display: flex;
     justify-content: center;
-    margin: 2rem 0;
   }
   
   .action-button {
-    background-color: #ff0000;
-    color: #ff0000;
+    background-color: var(--green);
+    color: var(--white);
     border: none;
     padding: 0.75rem 2rem;
     font-size: 1.1rem;
     font-weight: 500;
-    border-radius: 50px;
+    border-radius: 100px;
     cursor: pointer;
     transition: all 0.2s;
     box-shadow: var(--shadow);
@@ -135,7 +135,8 @@
   }
   
   .action-button:disabled {
-    background-color: var(--white-fade);
+    /*display: none;*/
+    background-color: var(--white);
     color: var(--black);
     cursor: not-allowed;
     transform: none;

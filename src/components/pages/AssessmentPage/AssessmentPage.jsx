@@ -99,6 +99,17 @@ const AssessmentPage = () => {
         <div className="progress-bar">
           <div className="progress-fill" style={{ width: `${progress}%` }}></div>
         </div>
+        <div className="button-container">
+        <button 
+          className={`action-button ${isAssessmentComplete() ? 'primary' : ''}`}
+          onClick={handleNext}
+          disabled={!isAssessmentComplete()}
+        >
+          {isAssessmentComplete() 
+            ? "Se anbefalte tiltak" 
+            : `Fullfør alle ${categories.length} kategorier for å fortsette`}
+        </button>
+      </div>
       </div>
       
       <div className="categories-container">
@@ -140,19 +151,7 @@ const AssessmentPage = () => {
           })}
         </div>
       </div>
-      
-      <div className="button-container">
-        <button 
-          className={`action-button ${isAssessmentComplete() ? 'primary' : ''}`}
-          onClick={handleNext}
-          disabled={!isAssessmentComplete()}
-        >
-          {isAssessmentComplete() 
-            ? "Se anbefalte tiltak" 
-            : `Fullfør alle ${categories.length} kategorier for å fortsette`}
-        </button>
-      </div>
-      
+           
       {selectedCategory && (
         <CategoryDetail 
           categoryId={selectedCategory}

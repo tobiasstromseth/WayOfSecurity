@@ -1,5 +1,5 @@
 // Neo4jContext.jsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import neo4j from 'neo4j-driver';
 import DBQueries from './DBQueries';
 
@@ -10,35 +10,17 @@ export const Neo4jContext = createContext(null);
 export const useNeo4j = () => useContext(Neo4jContext);
 
 export const Neo4jProvider = ({ children }) => {
-  const [driver, setDriver] = useState(null);
   const [dbQueries, setDbQueries] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  const driverRef = useRef(null);
 
-  const testConnection = async (driver) => {
-    const session = driver.session();
-    try {
-      // Kjør en enkel spørring som henter alt for å verifisere at tilkoblingen fungerer
-      const result = await session.run('MATCH (n) RETURN * LIMIT 1');
-      
-      // Sjekk at spørringen fungerer før vi bekrefter tilkobling
-      if (result && result.records) {
-        console.log('Testspørring vellykket:', result.records.length ? 'Data funnet' : 'Ingen data funnet');
-        console.log(result);
-        return true;
-      } else {
-        throw new Error('Spørring kjørte, men returnerte ugyldig resultatformat');
-      }
-    } catch (error) {
-      console.error('Feil ved testspørring:', error);
-      throw error;
-    } finally {
-      await session.close();
-    }
-  };
-
+  // Kun én gang ved oppstart
   useEffect(() => {
+    // Ikke initialiser på nytt hvis vi allerede har en driver
+    if (driverRef.current) return;
+
     const initDriver = async () => {
       try {
         setIsInitializing(true);
@@ -71,22 +53,32 @@ export const Neo4jProvider = ({ children }) => {
           driverConfig
         );
         
-        // Verifiser tilkobling
+        // Verifiser tilkobling (kun én gang)
         await newDriver.verifyConnectivity();
         
-        // Kjør testspørring
-        await testConnection(newDriver);
-        
-        const queries = new DBQueries(newDriver);
-        
-        setDriver(newDriver);
-        setDbQueries(queries);
-        setIsConnected(true);
-        setConnectionError(null);
-        
-        console.log('Neo4j-tilkobling opprettet og testet');
+        // Kjør en enkel testspørring
+        const session = newDriver.session();
+        try {
+          await session.run('RETURN 1 as test');
+          console.log('Neo4j-tilkobling testet og er OK');
+          
+          // Lagre driver i ref for å unngå reinitialisering
+          driverRef.current = newDriver;
+          
+          // Opprett DBQueries-instans kun én gang
+          const queries = new DBQueries(newDriver);
+          setDbQueries(queries);
+          setIsConnected(true);
+          setConnectionError(null);
+        } catch (error) {
+          console.error('Feil ved testspørring:', error);
+          setConnectionError(error.message);
+          setIsConnected(false);
+        } finally {
+          await session.close();
+        }
       } catch (err) {
-        console.error('Feil ved oppretting eller testing av Neo4j-tilkobling:', err);
+        console.error('Feil ved oppretting av Neo4j-tilkobling:', err);
         setConnectionError(err.message);
         setIsConnected(false);
       } finally {
@@ -96,17 +88,18 @@ export const Neo4jProvider = ({ children }) => {
 
     initDriver();
 
+    // Cleanup ved unmount
     return () => {
-      if (driver) {
-        driver.close();
+      if (driverRef.current) {
+        driverRef.current.close();
         console.log('Neo4j-tilkobling lukket');
       }
     };
-  }, []);
+  }, []); // Tomt avhengighetsarray betyr at dette kjøres kun én gang ved første rendering
 
   // Make both the driver and dbQueries available in the context
   const contextValue = {
-    driver,
+    driver: driverRef.current,
     dbQueries,
     isConnected,
     connectionError,

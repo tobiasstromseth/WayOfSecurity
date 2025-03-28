@@ -6,6 +6,7 @@ import { categories, categoryIcons } from '../../../data/categories';
 import CategoryDetail from '../../common/Category/CategoryDetail';
 import Header from '../../common/Header/Header';
 import Background from '../../common/SpritesLoader/BackgroundSprites';
+import CardFactory from '../../common/Card/CardFactory'; // Importerer CardFactory
 import './AssessmentPage.css';
 
 const AssessmentPage = () => {

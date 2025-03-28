@@ -1,0 +1,149 @@
+/* Neo4jCard.css */
+
+.neo4j-card {
+    height: 380px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+  
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  .neo4j-card.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+  
+  .card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card-front {
+    background-color: white;
+  }
+  
+  .card-back {
+    background-color: #f8f9fa;
+    transform: rotateY(180deg);
+  }
+  
+  .card-category {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    display: inline-block;
+    margin-bottom: 15px;
+  }
+  
+  .card-question {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    line-height: 1.4;
+    color: #2c3e50;
+  }
+  
+  .card-alternative {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #34495e;
+    margin-bottom: 20px;
+    flex-grow: 1;
+  }
+  
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid #ecf0f1;
+    font-size: 0.8rem;
+    color: #95a5a6;
+  }
+  
+  .card-points {
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  
+  .card-checkbox {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+  }
+  
+  .card-checkbox input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+  
+  /* Back of card styling */
+  .section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #2c3e50;
+  }
+  
+  .section-content {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    color: #34495e;
+  }
+  
+  .points-summary {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid #ecf0f1;
+  }
+  
+  .points-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+    color: #7f8c8d;
+  }
+  
+  .points-row.total {
+    font-weight: bold;
+    color: #2c3e50;
+    margin-top: 10px;
+    padding-top: 5px;
+    border-top: 1px dashed #ecf0f1;
+  }
+  
+  /* Loading skeleton */
+  .card-skeleton {
+    height: 380px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+  
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }

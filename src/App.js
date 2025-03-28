@@ -8,6 +8,7 @@ import { sprites } from './components/common/SpritesLoader/SpritesLoader';
 import StartPage from "./components/pages/StartPage/StartPage";
 import AssessmentPage from "./components/pages/AssessmentPage/AssessmentPage";
 import ResultsPage from "./components/pages/ResultsPage/ResultsPage";
+import TestCards from "./components/pages/TestCards/TestCards";
 import DatabaseStatus from "./components/common/DatabaseStatus";
 import "./styles/global.css";
 
@@ -18,7 +19,7 @@ function App() {
         <AssessmentProvider>
           <Router>
             <Routes>
-              <Route path="/" element={<StartPage />} />
+              <Route path="/" element={<TestCards />} />
               <Route path="/assessment" element={<AssessmentPage />} />
               <Route path="/results" element={<ResultsPage />} />
             </Routes>

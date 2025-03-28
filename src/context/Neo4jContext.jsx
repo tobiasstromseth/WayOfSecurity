@@ -1,6 +1,13 @@
+// Neo4jContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import neo4j from 'neo4j-driver';
-import DBQueries, { Neo4jContext } from './DBQueries';
+import DBQueries from './DBQueries';
+
+// Create the context
+export const Neo4jContext = createContext(null);
+
+// Custom hook to use the context
+export const useNeo4j = () => useContext(Neo4jContext);
 
 export const Neo4jProvider = ({ children }) => {
   const [driver, setDriver] = useState(null);
@@ -18,7 +25,7 @@ export const Neo4jProvider = ({ children }) => {
       // Sjekk at spørringen fungerer før vi bekrefter tilkobling
       if (result && result.records) {
         console.log('Testspørring vellykket:', result.records.length ? 'Data funnet' : 'Ingen data funnet');
-        console.log(result)
+        console.log(result);
         return true;
       } else {
         throw new Error('Spørring kjørte, men returnerte ugyldig resultatformat');
@@ -97,8 +104,10 @@ export const Neo4jProvider = ({ children }) => {
     };
   }, []);
 
+  // Make both the driver and dbQueries available in the context
   const contextValue = {
-    ...dbQueries,
+    driver,
+    dbQueries,
     isConnected,
     connectionError,
     isInitializing
@@ -110,5 +119,3 @@ export const Neo4jProvider = ({ children }) => {
     </Neo4jContext.Provider>
   );
 };
-
-export { useNeo4j } from './DBQueries';

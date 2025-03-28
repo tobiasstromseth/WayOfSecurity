@@ -1,13 +1,9 @@
-import { createContext, useContext } from 'react';
-
-export const Neo4jContext = createContext(null);
-
-export const useNeo4j = () => useContext(Neo4jContext);
-
+// DBQueries.js
 // DBQueries-klasse med metoder for å interagere med Neo4j
 class DBQueries {
   constructor(driver) {
     this.driver = driver;
+    console.log("DBQueries initialized with driver:", driver);
   }
 
   // Kjør Cypher-spørring mot Neo4j
@@ -15,6 +11,10 @@ class DBQueries {
     if (!this.driver) {
       throw new Error("No active Neo4j connection");
     }
+
+    console.log("Executing cypher:", cypher);
+    console.log("Driver available:", !!this.driver);
+    console.log("Driver session method:", typeof this.driver.session);
 
     const session = this.driver.session();
     try {
@@ -31,7 +31,9 @@ class DBQueries {
   // Hent alle kategori-IDer
   async getAllCategoryIds() {
     const cypher = "MATCH (k:Kategori) RETURN k.kategori_id";
+    console.log("Getting all category IDs");
     const records = await this.executeCypher(cypher);
+    console.log("Category IDs fetched:", records.length);
     return records.map(record => record.get('k.kategori_id'));
   }
 

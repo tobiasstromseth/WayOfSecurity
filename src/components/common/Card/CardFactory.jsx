@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNeo4j } from '../../context/Neo4jContext';
+import { useNeo4j } from '../../../context/Neo4jContext';
 import './Card.css';
 
 const Neo4jCard = ({ cardId }) => {
@@ -9,33 +9,66 @@ const Neo4jCard = ({ cardId }) => {
   const [flipped, setFlipped] = useState(false);
   const [checkboxState, setCheckboxState] = useState(false);
   
-  const dbQueries = useNeo4j();
+  const neo4jContext = useNeo4j();
 
   useEffect(() => {
     const fetchCardData = async () => {
       try {
         setLoading(true);
         
-        // Hent kortdata fra Neo4j med DBQueries
-        const data = await dbQueries.getCardById(cardId);
-        
-        if (data) {
-          setCardData(data);
-          setCheckboxState(data.state === 'avhuket');
+        // Sjekk om Neo4j-tilkoblingen er klar
+        if (neo4jContext && !neo4jContext.isInitializing && neo4jContext.isConnected && neo4jContext.getCardById) {
+          try {
+            const data = await neo4jContext.getCardById(cardId);
+            
+            if (data) {
+              setCardData(data);
+              setCheckboxState(data.state === 'avhuket');
+            } else {
+              console.warn(`Kort med ID ${cardId} ble ikke funnet, bruker statiske data`);
+              loadStaticData();
+            }
+          } catch (dbError) {
+            console.error('Feil ved henting av kortdata fra Neo4j:', dbError);
+            loadStaticData();
+          }
         } else {
-          console.error(`Kort med ID ${cardId} ble ikke funnet`);
+          // Hvis tilkoblingen ikke er klar eller isConnected er false, bruk statiske data
+          loadStaticData();
         }
       } catch (err) {
-        console.error('Error fetching card:', err);
+        console.error('Feil ved henting av kort:', err);
+        loadStaticData();
       } finally {
         setLoading(false);
       }
     };
     
-    if (cardId && dbQueries) {
-      fetchCardData();
-    }
-  }, [cardId, dbQueries]);
+    // Funksjon for å bruke statiske data
+    const loadStaticData = () => {
+      // Statiske data for utvikling
+      const data = {
+        id: cardId,
+        poeng: 10,
+        kategori_tekst: "Objektorienterte kort",
+        sporsmal_tekst: "Hvilken designmønster bruker du for å lage objekter?",
+        alternativ_tekst: "Factory pattern",
+        alternativ_poeng: 5,
+        bruker_poeng: 0,
+        forklaringer: "Factory pattern brukes for å skape objekter uten å spesifisere den eksakte klassen for objektet.",
+        tiltak: "Implementer en factory klasse som håndterer opprettelsen av kortene basert på dataene fra Neo4j.",
+        state: "ikke_avhuket"
+      };
+      
+      setCardData(data);
+      setCheckboxState(data.state === 'avhuket');
+    };
+    
+    // Hent data når komponenten monteres eller cardId endres
+    fetchCardData();
+    
+    // Hvis Neo4j-tilkoblingsstatus endres, prøv igjen
+  }, [cardId, neo4jContext]);
 
   const handleFlip = () => {
     setFlipped(!flipped);
@@ -47,12 +80,16 @@ const Neo4jCard = ({ cardId }) => {
     setCheckboxState(newState);
     
     try {
-      // Oppdater kortets tilstand i Neo4j
-      await dbQueries.updateCardState(
-        cardId, 
-        newState ? 'avhuket' : 'ikke_avhuket'
-      );
-      console.log(`Kort ${cardId} oppdatert til ${newState ? 'avhuket' : 'ikke_avhuket'}`);
+      // Oppdater kortets tilstand i Neo4j hvis tilkoblingen er tilgjengelig
+      if (neo4jContext && neo4jContext.isConnected && neo4jContext.updateCardState) {
+        await neo4jContext.updateCardState(
+          cardId, 
+          newState ? 'avhuket' : 'ikke_avhuket'
+        );
+        console.log(`Kort ${cardId} oppdatert til ${newState ? 'avhuket' : 'ikke_avhuket'}`);
+      } else {
+        console.warn("Neo4j-tilkobling ikke tilgjengelig, kan ikke oppdatere korttilstand");
+      }
     } catch (error) {
       console.error('Feil ved oppdatering av kort:', error);
       // Tilbakestill checkbox hvis oppdatering feilet

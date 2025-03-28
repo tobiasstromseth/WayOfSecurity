@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNeo4j } from '../../context/Neo4jContext';
 import './Card.css';
 
 const Neo4jCard = ({ cardId }) => {
@@ -7,31 +8,23 @@ const Neo4jCard = ({ cardId }) => {
   const [loading, setLoading] = useState(true);
   const [flipped, setFlipped] = useState(false);
   const [checkboxState, setCheckboxState] = useState(false);
+  
+  const dbQueries = useNeo4j();
 
   useEffect(() => {
     const fetchCardData = async () => {
       try {
         setLoading(true);
-        // Simulate API call to Neo4j - replace with actual endpoint
-        // const response = await fetch(`/api/card/${cardId}`);
-        // const data = await response.json();
         
-        // Simulated data for development
-        const data = {
-          id: cardId,
-          poeng: 10,
-          kategori_tekst: "Objektorienterte kort",
-          sporsmal_tekst: "Hvilken designmønster bruker du for å lage objekter?",
-          alternativ_tekst: "Factory pattern",
-          alternativ_poeng: 5,
-          bruker_poeng: 0,
-          forklaringer: "Factory pattern brukes for å skape objekter uten å spesifisere den eksakte klassen for objektet.",
-          tiltak: "Implementer en factory klasse som håndterer opprettelsen av kortene basert på dataene fra Neo4j.",
-          state: "ikke_avhuket"
-        };
+        // Hent kortdata fra Neo4j med DBQueries
+        const data = await dbQueries.getCardById(cardId);
         
-        setCardData(data);
-        setCheckboxState(data.state === 'avhuket');
+        if (data) {
+          setCardData(data);
+          setCheckboxState(data.state === 'avhuket');
+        } else {
+          console.error(`Kort med ID ${cardId} ble ikke funnet`);
+        }
       } catch (err) {
         console.error('Error fetching card:', err);
       } finally {
@@ -39,26 +32,32 @@ const Neo4jCard = ({ cardId }) => {
       }
     };
     
-    fetchCardData();
-  }, [cardId]);
+    if (cardId && dbQueries) {
+      fetchCardData();
+    }
+  }, [cardId, dbQueries]);
 
   const handleFlip = () => {
     setFlipped(!flipped);
   };
   
-  const handleCheckboxChange = (e) => {
+  const handleCheckboxChange = async (e) => {
     e.stopPropagation();
     const newState = e.target.checked;
     setCheckboxState(newState);
     
-    // Update card state in Neo4j (simulated)
-    console.log(`Updating card ${cardId} state to ${newState ? 'avhuket' : 'ikke_avhuket'}`);
-    // In real implementation:
-    // await fetch(`/api/card/${cardId}/state`, {
-    //   method: 'PUT',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ state: newState ? 'avhuket' : 'ikke_avhuket' })
-    // });
+    try {
+      // Oppdater kortets tilstand i Neo4j
+      await dbQueries.updateCardState(
+        cardId, 
+        newState ? 'avhuket' : 'ikke_avhuket'
+      );
+      console.log(`Kort ${cardId} oppdatert til ${newState ? 'avhuket' : 'ikke_avhuket'}`);
+    } catch (error) {
+      console.error('Feil ved oppdatering av kort:', error);
+      // Tilbakestill checkbox hvis oppdatering feilet
+      setCheckboxState(!newState);
+    }
   };
   
   if (loading) {

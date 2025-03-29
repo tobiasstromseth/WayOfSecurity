@@ -5,85 +5,6 @@
   box-sizing: border-box;
 }
 
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1.5rem;
-  padding: 0 2rem 2rem 2rem;
-}
-
-/* Medium-large screens - 3 kolonner */
-@media (max-width: 992px) {
-  .categories-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* Medium screens - 2 kolonner */
-@media (max-width: 768px) {
-  .categories-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* Small screens - 1 kolonne */
-@media (max-width: 576px) {
-  .categories-grid {
-    grid-template-columns: 1fr;
-  }
-}
-  
-.category-card {
-  background-color: var(--purple);
-  border-radius: 8px;
-  box-shadow: var(--shadow);
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  height: 100%;
-}
-
-.category-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-hover);
-}
-
-.icon-container {
-  color: var(--white);
-  width: 80px;
-  height: 80px;
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.category-title {
-  font-size: 1.2rem;
-  margin: 0;
-  margin-bottom: 0.5rem;
-  color: var(--white);
-}
-
-.category-description {
-  font-size: 0.85rem;
-  color: var(--white);
-  line-height: 1.4;
-  margin-bottom: 0.5rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
- 
-.status-indicator.complete {
-  color: var(--green);
-}
-
 .categories-container {
   position: relative;
   width: 100%;
@@ -165,8 +86,7 @@
 /* Sørg for at andre elementer er over bakgrunnssprites */
 .status-bar,
 .categories-container,
-.button-container,
-.category-card {
+.button-container {
   position: relative;
   z-index: 1;
 }
@@ -423,35 +343,4 @@
   margin-top: 0.5rem;
   padding-left: 0.5rem;
   border-left: 2px solid #ddd;
-}
-
-/* Additional utility styles */
-.loading-container,
-.error-container,
-.empty-container {
-  text-align: center;
-  padding: 2rem;
-  margin: 1rem;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-.error-container {
-  color: #d32f2f;
-  border: 1px solid #ffcdd2;
-  background-color: #ffebee;
-}
-
-.refresh-button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.refresh-button:hover {
-  background-color: #45a049;
 }

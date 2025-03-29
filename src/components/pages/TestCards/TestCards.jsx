@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from '../../common/Header/Header';
-import CardFactory from '../../common/Card/CardFactory';
+import CardFactory from '../../common/Card/Card';
 import './TestCards.css';
 
 const TestCards = () => {

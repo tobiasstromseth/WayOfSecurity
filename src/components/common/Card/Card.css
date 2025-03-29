@@ -2,289 +2,365 @@
 
 /* Main container for the CardFactory component */
 .card-factory {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  /* Loading state container */
-  .loading-container {
-    text-align: center;
-    padding: 40px;
-    color: #666;
-    font-size: 16px;
-  }
-  
-  /* Error state container */
-  .error-container {
-    text-align: center;
-    padding: 30px;
-    color: #d32f2f;
-    border: 1px solid #ffcdd2;
-    background-color: #ffebee;
-    border-radius: 5px;
-    margin: 20px 0;
-  }
-  
-  /* Empty state container */
-  .empty-container {
-    text-align: center;
-    padding: 40px;
-    color: #666;
-    border: 1px dashed #ccc;
-    border-radius: 5px;
-    margin: 20px 0;
-  }
-  
-  /* Header for cards section */
-  .cards-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-  }
-  
-  .cards-header h2 {
-    margin: 0;
-    color: #333;
-  }
-  
-  /* Summary of categories and cards */
-  .categories-summary {
-    margin-bottom: 20px;
-    color: #666;
-    font-style: italic;
-  }
-  
-  /* Grid layout for cards */
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    align-items: start; /* Makes sure cards start at same height */
-  }
-  
-  /* Individual card styling */
-  .card {
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    max-height: 400px;
-    overflow-y: auto;
-    position: relative;
-    scroll-behavior: smooth;
-  }
-  
-  .card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* Scroll indicator */
-  .scroll-indicator {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background-color: rgba(52, 152, 219, 0.8);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    z-index: 10;
-  }
-  
-  .card:hover .scroll-indicator {
-    opacity: 1;
-  }
-  
-  .card.scrolled .scroll-indicator {
-    opacity: 0;
-  }
-  
-  /* Scrollbar styling for better visibility */
-  .card::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  .card::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-  }
-  
-  .card::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 4px;
-  }
-  
-  .card::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
-  }
-  
-  /* Category section in a card */
-  .category-section {
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-  }
-  
-  .category-section h3 {
-    margin: 0 0 10px 0;
-    color: #2c3e50;
-    font-size: 18px;
-  }
-  
-  /* Question section in a card */
-  .question-section {
-    margin-bottom: 15px;
-  }
-  
-  .question-section h4 {
-    margin: 0 0 5px 0;
-    color: #3498db;
-    font-size: 16px;
-  }
-  
-  .question-section p {
-    margin: 0;
-    color: #333;
-  }
-  
-  /* Alternatives section in a card */
-  .alternatives-section {
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-  }
-  
-  .alternatives-section h4 {
-    margin: 0 0 10px 0;
-    color: #3498db;
-    font-size: 16px;
-  }
-  
-  /* Individual alternative */
-  .alternative {
-    margin-bottom: 15px;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 4px;
-    border-left: 3px solid #3498db;
-  }
-  
-  .alternative:last-child {
-    margin-bottom: 0;
-  }
-  
-  .alternative h5 {
-    margin: 0 0 8px 0;
-    color: #333;
-    font-size: 15px;
-  }
-  
-  .alternative-content {
-    padding-left: 10px;
-  }
-  
-  /* Property in a card or alternative */
-  .card-property {
-    margin-bottom: 8px;
-    line-height: 1.4;
-  }
-  
-  .card-property strong {
-    color: #555;
-  }
-  
-  .card-property span {
-    color: #333;
-  }
-  
-  /* Card main content area */
-  .card-main-content {
-    margin-bottom: 15px;
-  }
-  
-  /* Refresh button */
-  .refresh-button {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
-  }
-  
-  .refresh-button:hover {
-    background-color: #2980b9;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .cards-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .cards-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    
-    .cards-header button {
-      margin-top: 10px;
-    }
-  }
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+/* Loading state container */
+.loading-container {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+/* Error state container */
+.error-container {
+  text-align: center;
+  padding: 30px;
+  color: #d32f2f;
+  border: 1px solid #ffcdd2;
+  background-color: #ffebee;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
+/* Empty state container */
+.empty-container {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  border: 1px dashed #ccc;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
+/* Header for cards section */
+.cards-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.cards-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+/* Summary of categories and cards */
+.categories-summary {
+  margin-bottom: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Grid layout for standard cards */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  align-items: start; /* Makes sure cards start at same height */
+}
+
+/* Grid layout for assessment cards */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+  padding: 0 2rem 2rem 2rem;
+}
+
+/* Medium-large screens - 3 columns */
+@media (max-width: 992px) {
+  .categories-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  
-  .card-id {
-    font-size: 0.8rem;
-    color: #666;
+}
+
+/* Medium screens - 2 columns */
+@media (max-width: 768px) {
+  .categories-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  
-  .points-section {
-    display: flex;
-    align-items: center;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-weight: bold;
+}
+
+/* Small screens - 1 column */
+@media (max-width: 576px) {
+  .categories-grid {
+      grid-template-columns: 1fr;
   }
-  
-  .points-label {
-    margin-right: 5px;
-    font-size: 0.8rem;
-  }
-  
-  .points-value {
-    font-size: 1.1rem;
-  }
-  
-  .points-high {
-    background-color: #d4edda;
-    color: #155724;
-  }
-  
-  .points-medium {
-    background-color: #fff3cd;
-    color: #856404;
-  }
-  
-  .points-low {
-    background-color: #f8d7da;
-    color: #721c24;
-  }
+}
+
+/* Category card styling (assessment mode) */
+.category-card {
+  background-color: var(--purple);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+.category-card .icon-container {
+  color: var(--white);
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.category-title {
+  font-size: 1.2rem;
+  margin: 0;
+  margin-bottom: 0.5rem;
+  color: var(--white);
+}
+
+.category-description {
+  font-size: 0.85rem;
+  color: var(--white);
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.status-indicator {
+  font-size: 0.8rem;
+  color: var(--white-fade);
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  margin-top: 0.5rem;
+}
+
+.status-indicator.complete {
+  color: var(--green);
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Individual standard card styling */
+.card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  max-height: 400px;
+  overflow-y: auto;
+  position: relative;
+  scroll-behavior: smooth;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Scroll indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(52, 152, 219, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.card:hover .scroll-indicator {
+  opacity: 1;
+}
+
+.card.scrolled .scroll-indicator {
+  opacity: 0;
+}
+
+/* Scrollbar styling for better visibility */
+.card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.card::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.card::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Category section in a card */
+.category-section {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.category-section h3 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 18px;
+}
+
+/* Question section in a card */
+.question-section {
+  margin-bottom: 15px;
+}
+
+.question-section h4 {
+  margin: 0 0 5px 0;
+  color: #3498db;
+  font-size: 16px;
+}
+
+.question-section p {
+  margin: 0;
+  color: #333;
+}
+
+/* Alternatives section in a card */
+.alternatives-section {
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.alternatives-section h4 {
+  margin: 0 0 10px 0;
+  color: #3498db;
+  font-size: 16px;
+}
+
+/* Individual alternative */
+.alternative {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 4px;
+  border-left: 3px solid #3498db;
+}
+
+.alternative:last-child {
+  margin-bottom: 0;
+}
+
+.alternative h5 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 15px;
+}
+
+.alternative-content {
+  padding-left: 10px;
+}
+
+/* Property in a card or alternative */
+.card-property {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.card-property strong {
+  color: #555;
+}
+
+.card-property span {
+  color: #333;
+}
+
+/* Card main content area */
+.card-main-content {
+  margin-bottom: 15px;
+}
+
+/* Refresh button */
+.refresh-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.refresh-button:hover {
+  background-color: #2980b9;
+}
+
+/* Card header with ID and points */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.card-id {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.points-section {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.points-label {
+  margin-right: 5px;
+  font-size: 0.8rem;
+}
+
+.points-value {
+  font-size: 1.1rem;
+}
+
+.points-high {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.points-medium {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.points-low {
+  background-color: #f8d7da;
+  color: #721c24;
+}

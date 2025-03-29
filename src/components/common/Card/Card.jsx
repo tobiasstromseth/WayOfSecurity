@@ -27,6 +27,11 @@ const CategoryDetail = ({
     }
   }, [categoryId, answers]);
   
+  // Calculate status metrics - moved before the useEffect that uses them
+  const totalQuestions = categoryData.alternatives?.length || 0;
+  const answeredQuestions = Object.keys(internalState).length;
+  const isComplete = completedCategories ? completedCategories.includes(categoryId) : false;
+  
   // For debugging
   useEffect(() => {
     console.log('CategoryDetail rendered with:', { 
@@ -36,11 +41,6 @@ const CategoryDetail = ({
       alternatives: categoryData.alternatives?.length
     });
   }, [categoryId, categoryData, totalQuestions, answeredQuestions]);
-  
-  // Calculate status metrics
-  const totalQuestions = categoryData.alternatives?.length || 0;
-  const answeredQuestions = Object.keys(internalState).length;
-  const isComplete = completedCategories ? completedCategories.includes(categoryId) : false;
   
   // Create default handlers if not provided
   const safeUpdateAnswer = (catId, qId, value) => {

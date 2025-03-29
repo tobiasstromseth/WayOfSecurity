@@ -10,6 +10,7 @@ import './AssessmentPage.css';
 import ModalPortal from '../../common/ModalPortal';
 import Question from '../../common/Question';
 import styled from 'styled-components';
+import testIcon from '../../../assets/icons/84f786f5-5591-4379-9407-65238f37ca2d_removalai_preview.png'
 
 // =================== Styled components for modal ================
 const Overlay = styled.div`
@@ -559,9 +560,6 @@ const AssessmentPage = () => {
                   <p className="category-description">
                     {card.category?.description || "No description available"}
                   </p>
-                  <div className={`status-indicator ${isComplete ? 'complete' : ''}`}>
-                    {status.answered}/{card.alternatives?.length || 0} alternativer besvart
-                  </div>
                 </div>
               </motion.div>
             </React.Fragment>

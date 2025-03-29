@@ -1,15 +1,18 @@
+// src/components/pages/ResultsPage/ResultsPage.jsx
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AssessmentContext } from '../../../context/AssessmentContext';
-import { categories } from '../../../data/categories';
 import { categoryIcons } from '../../../data/categories';
+import { useCards } from '../../../context/CardContext';
 import RecommendationDetail from '../../common/RecommendationDetail/RecommendationDetail';
 import Header from '../../common/Header/Header';
 import './ResultsPage.css';
 
 const ResultsPage = () => {
   const { securityScore, getCategoryStatus } = useContext(AssessmentContext);
+  // Use the CardContext instead of static categories
+  const { cards } = useCards();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [flipped, setFlipped] = useState(false);
   const navigate = useNavigate();
@@ -45,6 +48,9 @@ const ResultsPage = () => {
     return 'score-error';
   };
   
+  // Use cards from CardContext instead of static categories
+  const categoryCards = cards || [];
+  
   return (
     <div className="page-container">
       <motion.div
@@ -55,9 +61,9 @@ const ResultsPage = () => {
         style={{ transformStyle: 'preserve-3d' }}
       >
         <div className="flipped-content">
-        <Header /> 
+          <Header /> 
           <header className="results-header">
-          <h1 className="results-header-title">SIKKERHETSTLTAK</h1>
+            <h1 className="results-header-title">SIKKERHETSTLTAK</h1>
             <div className={`score-display ${getScoreClass(securityScore)}`}>
               Din score: {securityScore}/100
             </div>
@@ -65,13 +71,21 @@ const ResultsPage = () => {
           </header>
           
           <div className="grid">
-            {categories.map(category => {
-              const status = getCategoryStatus(category.id);
-              const icon = categoryIcons[category.icon] || null;
+            {categoryCards.map((card, index) => {
+              const category = card.category;
+              if (!category) return null;
+              
+              const categoryId = category.id?.toString();
+              const status = getCategoryStatus(categoryId);
+              if (!status) return null;
+              
+              // Find an appropriate icon or use a random one
+              const iconKey = Object.keys(categoryIcons)[index % Object.keys(categoryIcons).length];
+              const icon = categoryIcons[iconKey] || null;
               
               return (
                 <motion.div
-                  key={category.id}
+                  key={categoryId || index}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 1 + Math.random() * 0.5 }}
@@ -79,10 +93,10 @@ const ResultsPage = () => {
                   <div 
                     className={`results-card ${status.fulfilled === status.total ? 'fulfilled' : 
                               status.fulfilled > 0 ? 'partial' : 'unfulfilled'}`}
-                    onClick={() => handleCategoryClick(category.id)}
+                    onClick={() => handleCategoryClick(categoryId)}
                   >
                     <div className="icon-container">{icon}</div>
-                    <h3 className="card-title">{category.name}</h3>
+                    <h3 className="card-title">{category.text}</h3>
                     
                     <div className="score-bar">
                       <div 

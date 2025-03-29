@@ -1,3 +1,4 @@
+// src/components/pages/AssessmentPage/AssessmentPage.jsx
 import React, { useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -5,7 +6,7 @@ import { AssessmentContext } from '../../../context/AssessmentContext';
 import { categoryIcons } from '../../../data/categories';
 import Header from '../../common/Header/Header';
 import Background from '../../common/SpritesLoader/BackgroundSprites';
-import { useNeo4j } from '../../../context/Neo4jContext';
+import { useCards } from '../../../context/CardContext';
 import './AssessmentPage.css';
 import ModalPortal from '../../common/ModalPortal/ModalPortal';
 
@@ -162,120 +163,25 @@ const AssessmentPage = () => {
   
   const [selectedCategoryData, setSelectedCategoryData] = useState(null);
   const [visibleRows, setVisibleRows] = useState([]);
-  const [cards, setCards] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const cardsRef = useRef([]);
   const navigate = useNavigate();
   
-  const { dbQueries, isConnected, isInitializing, connectionError } = useNeo4j();
+  // Use the CardContext instead of direct Neo4j queries
+  const { cards, loading, error, fetchCards } = useCards();
   
-  // Fetch data from Neo4j database
-  const fetchData = useCallback(async () => {
-    console.log("Fetching data from Neo4j...");
-    if (isInitializing) return;
-    
-    if (!isConnected || connectionError) {
-      setError(`Database connection error: ${connectionError}`);
-      setLoading(false);
-      return;
-    }
-    
-    if (!dbQueries) {
-      setError("Database queries are not available");
-      setLoading(false);
-      return;
-    }
-    
-    try {
-      setLoading(true);
-      
-      // Get all category IDs
-      const categoryIds = await dbQueries.getAllCategoryIds();
-      console.log("Fetched category IDs:", categoryIds);
-      
-      const fetchedCards = [];
-      
-      // Process each category ID
-      for (const categoryId of categoryIds) {
-        try {
-          const cardsData = await dbQueries.getCardById(categoryId);
-          console.log(`Fetched data for category ${categoryId}:`, cardsData?.length || 0, "records");
-          
-          if (cardsData && cardsData.length > 0) {
-            const firstRecord = cardsData[0].toObject();
-            
-            // Extract all alternatives from all records for this card
-            const alternatives = [];
-            const uniqueAlts = new Set();
-            
-            cardsData.forEach(record => {
-              const data = record.toObject();
-              const altText = data.alternativ_tekst;
-              
-              // Only add unique alternatives
-              if (altText && !uniqueAlts.has(altText)) {
-                uniqueAlts.add(altText);
-                alternatives.push({
-                  text: altText,
-                  description: data.alternativ_beskrivelse,
-                  what: data.alternativ_hva,
-                  how: data.alternativ_hvordan
-                });
-              }
-            });
-            
-            // Create a card object with category, question, and alternatives
-            const card = {
-              id: categoryId,
-              category: {
-                id: categoryId,
-                text: firstRecord.kategori_tekst,
-                description: firstRecord.kategori_beskrivelse
-              },
-              question: {
-                text: firstRecord.sporsmal_tekst
-              },
-              alternatives: alternatives
-            };
-            
-            fetchedCards.push(card);
-          }
-        } catch (error) {
-          console.error(`Error fetching card for category ID ${categoryId}:`, error);
-        }
-      }
-      
-      console.log("Total cards fetched:", fetchedCards.length);
-      setCards(fetchedCards);
-      setError(null);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [dbQueries, isConnected, isInitializing, connectionError]);
-  
-  // Run fetchData when necessary
-  useEffect(() => {
-    if (dbQueries && isConnected && !isInitializing) {
-      fetchData();
-    }
-  }, [dbQueries, isConnected, isInitializing, fetchData]);
-  
+  // Calculate rows for layout when cards change
   useEffect(() => {
     const calculateRows = () => {
       if (!cardsRef.current.length) return;
       
-      const cards = cardsRef.current.filter(ref => ref);
-      if (!cards.length) return;
+      const cardElements = cardsRef.current.filter(ref => ref);
+      if (!cardElements.length) return;
       
-      let currentRowTop = cards[0]?.getBoundingClientRect().top;
+      let currentRowTop = cardElements[0]?.getBoundingClientRect().top;
       let rows = [];
       let currentRow = [];
       
-      cards.forEach((card, index) => {
+      cardElements.forEach((card, index) => {
         const { top } = card.getBoundingClientRect();
         
         if (Math.abs(top - currentRowTop) > 10) {
@@ -303,8 +209,12 @@ const AssessmentPage = () => {
     };
   }, [cards.length]);
   
+  // Update cardRefs when cards change
+  useEffect(() => {
+    cardsRef.current = cardsRef.current.slice(0, cards.length);
+  }, [cards.length]);
+  
   const handleCategoryClick = (card) => {
-    console.log(`Opening category: ${card.id}`, card);
     setSelectedCategoryData(card);
   };
   
@@ -316,12 +226,9 @@ const AssessmentPage = () => {
     navigate('/results');
   };
   
+  // Calculate progress
   const totalCategories = cards.length;
   const progress = Math.round((completedCategories.length / (totalCategories || 1)) * 100);
-  
-  useEffect(() => {
-    cardsRef.current = cardsRef.current.slice(0, cards.length);
-  }, [cards.length]);
   
   // Render content based on loading/error/data state
   const renderContent = () => {
@@ -337,7 +244,7 @@ const AssessmentPage = () => {
       return (
         <div className="error-container">
           <p>Feil: {error}</p>
-          <button onClick={fetchData} className="refresh-button">Prøv igjen</button>
+          <button onClick={() => fetchCards(true)} className="refresh-button">Prøv igjen</button>
         </div>
       );
     }
@@ -346,11 +253,12 @@ const AssessmentPage = () => {
       return (
         <div className="empty-container">
           <p>Ingen kategorier funnet. Vennligst sjekk databasetilkoblingen.</p>
-          <button onClick={fetchData} className="refresh-button">Prøv igjen</button>
+          <button onClick={() => fetchCards(true)} className="refresh-button">Prøv igjen</button>
         </div>
       );
     }
     
+    // Return the cards grid with data from CardContext
     return (
       <div className="categories-grid">
         {cards.map((card, index) => {
@@ -358,6 +266,7 @@ const AssessmentPage = () => {
           const status = getCategoryStatus(categoryId) || { answered: 0, total: card.alternatives?.length || 0 };
           const isComplete = completedCategories.includes(categoryId);
           const shouldShowDivider = visibleRows.includes(index);
+          const randomColor = getRandomColor();
           
           return (
             <React.Fragment key={categoryId || index}>
@@ -371,10 +280,9 @@ const AssessmentPage = () => {
                 <div 
                   className="category-card" 
                   onClick={() => handleCategoryClick(card)}
-                  style={{ backgroundColor: getRandomColor() }}
+                  style={{ backgroundColor: randomColor }}
                 >
                   <div className="icon-container">
-                    {/* Try to find a matching icon, or use a random one */}
                     {categoryIcons[Object.keys(categoryIcons)[index % Object.keys(categoryIcons).length]]}
                   </div>
                   <h3 className="category-title">{card.category?.text || "Unnamed Category"}</h3>

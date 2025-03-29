@@ -1,7 +1,8 @@
+// src/components/common/RecommendationDetail/RecommendationDetail.jsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { categoryIcons } from '../../../data/categories'; // Keeping icons for now
-import { useNeo4j } from '../../../context/Neo4jContext';
+import { categoryIcons } from '../../../data/categories'; // Keep icons for now
+import { useCards } from '../../../context/CardContext';
 import ModalPortal from '../ModalPortal/ModalPortal';
 import './RecommendationDetail.css';
 
@@ -10,56 +11,37 @@ const RecommendationDetailComponent = ({ categoryId, status, onClose }) => {
   const [error, setError] = useState(null);
   const [categoryData, setCategoryData] = useState(null);
   const [recommendationData, setRecommendationData] = useState(null);
-  const { dbQueries, isConnected } = useNeo4j();
+  const { cards, getCardById } = useCards();
   
   useEffect(() => {
     const fetchData = async () => {
-      if (!isConnected || !dbQueries) {
-        setError("Database connection not available");
-        setLoading(false);
-        return;
-      }
-      
       try {
         setLoading(true);
         
-        // Fetch category data from Neo4j
-        const cardsData = await dbQueries.getCardById(categoryId);
+        // Get card data from CardContext instead of directly from Neo4j
+        const card = cards.find(c => c.id?.toString() === categoryId || c.id === parseInt(categoryId));
         
-        if (!cardsData || cardsData.length === 0) {
+        if (!card) {
           setError("Category not found");
           setLoading(false);
           return;
         }
         
-        // Extract category information from the first record
-        const firstRecord = cardsData[0].toObject();
-        
+        // Extract category information
         const category = {
           id: categoryId,
-          text: firstRecord.kategori_tekst,
-          description: firstRecord.kategori_beskrivelse,
+          text: card.category?.text || "",
+          description: card.category?.description || "",
           icon: 'resources' // Default icon
         };
         
-        // Build unique recommendations from all alternatives
-        const alternativesMap = new Map();
-        
-        cardsData.forEach(record => {
-          const data = record.toObject();
-          const altText = data.alternativ_tekst;
-          
-          if (altText && !alternativesMap.has(altText)) {
-            alternativesMap.set(altText, {
-              text: altText,
-              description: data.alternativ_beskrivelse,
-              what: data.alternativ_hva,
-              how: data.alternativ_hvordan
-            });
-          }
-        });
-        
-        const alternatives = Array.from(alternativesMap.values());
+        // Build recommendations from alternatives
+        const alternatives = card.alternatives.map(alt => ({
+          text: alt.text || "",
+          description: alt.description || "",
+          what: alt.what || "",
+          how: alt.how || ""
+        }));
         
         setCategoryData(category);
         setRecommendationData({
@@ -76,7 +58,7 @@ const RecommendationDetailComponent = ({ categoryId, status, onClose }) => {
     };
     
     fetchData();
-  }, [categoryId, dbQueries, isConnected]);
+  }, [categoryId, cards]);
   
   // Loading state
   if (loading) {
@@ -103,7 +85,7 @@ const RecommendationDetailComponent = ({ categoryId, status, onClose }) => {
             </div>
             <div className="content-container">
               <div style={{ textAlign: 'center', padding: '2rem' }}>
-                Henter data fra databasen...
+                Henter data...
               </div>
             </div>
           </motion.div>

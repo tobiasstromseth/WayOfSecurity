@@ -1,276 +1,23 @@
-// CardFactory.jsx
-import React, { useState, useEffect, useCallback } from 'react';
+// src/components/common/Card/CardFactory.jsx
+import React from 'react';
 import { motion } from 'framer-motion';
-import { useNeo4j } from '../../../context/Neo4jContext';
+import { useCards } from '../../../context/CardContext';
 import './Card.css';
 
 /**
- * DATAMODELL OVERSIKT
- * 
- * Kort (Card):
- * - id: Numerisk ID (samme som kategori-ID)
- * - category: Kategori-objekt med:
- *   - id: Numerisk ID
- *   - text: Kategoriens navn/tekst
- *   - description: Kategoriens beskrivelse
- * - question: Spørsmål-objekt med:
- *   - text: Spørsmålstekst
- * - alternatives: Liste av Alternativ-objekter, hvor hvert har:
- *   - text: Alternativets tekst
- *   - description: Alternativets beskrivelse
- *   - what: "Hva" informasjon om alternativet
- *   - how: "Hvordan" informasjon om alternativet
- * - points: Poengverdi for kortet
- */
-
-// ------------------------------
-// HJELPEFUNKSJONER
-// ------------------------------
-
-/**
- * Hjelper for å trekke ut numerisk ID fra Neo4j Integer-objekter
- */
-const extractNumericId = (id) => {
-  if (id && typeof id === 'object' && 'low' in id) {
-    return id.low;
-  }
-  return parseInt(id);
-};
-
-// ------------------------------
-// DATAMODELLER
-// ------------------------------
-
-/**
- * Kategori-modell
- * Inneholder:
- * - id: Numerisk ID
- * - text: Kategoriens tekst/navn
- * - description: Kategoriens beskrivelse
- */
-class Category {
-  constructor(data) {
-    this.id = extractNumericId(data.id);
-    this.text = data.text || '';
-    this.description = data.description || '';
-  }
-}
-
-/**
- * Spørsmål-modell
- * Inneholder:
- * - text: Spørsmålstekst
- */
-class Question {
-  constructor(data) {
-    this.text = data.text || '';
-  }
-}
-
-/**
- * Alternativ-modell
- * Inneholder:
- * - text: Alternativets tekst
- * - description: Alternativets beskrivelse
- * - what: "Hva" informasjon for implementering
- * - how: "Hvordan" informasjon for implementering
- */
-class Alternative {
-  constructor(data) {
-    this.text = data.text || '';
-    this.description = data.description || '';
-    this.what = data.what || '';
-    this.how = data.how || '';
-  }
-}
-
-/**
- * Kort-modell - Hoved datacontainer
- * Inneholder:
- * - id: Kortets ID (samme som kategori-ID)
- * - category: Kategori-objekt
- * - question: Spørsmål-objekt
- * - alternatives: Liste av alternativer
- * - points: Beregnet poengverdi
- */
-class Card {
-  constructor(data) {
-    // The card ID is the same as the category ID
-    this.id = data.category ? data.category.id : null;
-    this.category = data.category || null;
-    this.question = data.question || null;
-    this.alternatives = data.alternatives || [];
-    this.points = data.points || 0;
-  }
-
-  /**
-   * Oppretter et kort fra Neo4j-records
-   * @param {Array} records - Data fra Neo4j-spørringer
-   * @returns {Card|null} - Nytt kort-objekt eller null
-   */
-  static fromRecords(records) {
-    if (!records || records.length === 0) return null;
-    
-    // Extract initial category data from first record
-    const firstRecord = records[0].toObject();
-    
-    // Opprett kategori fra første record
-    const category = new Category({
-      id: firstRecord.id,
-      text: firstRecord.kategori_tekst,
-      description: firstRecord.kategori_beskrivelse
-    });
-    
-    // Opprett spørsmål fra første record
-    const question = new Question({
-      text: firstRecord.sporsmal_tekst
-    });
-    
-    // Samle alternativer fra alle records
-    const alternativesMap = new Map();
-    
-    records.forEach(record => {
-      const data = record.toObject();
-      const altText = data.alternativ_tekst;
-      
-      if (altText && !alternativesMap.has(altText)) {
-        alternativesMap.set(altText, new Alternative({
-          text: altText,
-          description: data.alternativ_beskrivelse,
-          what: data.alternativ_hva,
-          how: data.alternativ_hvordan
-        }));
-      }
-    });
-    
-    const alternatives = Array.from(alternativesMap.values());
-    
-    // Opprett og returner kortet
-    return new Card({ category, question, alternatives });
-  }
-}
-
-// ------------------------------
-// DATATJENESTER
-// ------------------------------
-
-/**
- * Kortdatatjeneste
- * Håndterer henting og behandling av kortdata
- */
-class CardDataService {
-  constructor(dbQueries) {
-    this.dbQueries = dbQueries;
-    this.dataFetched = false;
-    this.cards = [];
-  }
-  
-  /**
-   * Beregner poeng basert på kort-ID med ikke-lineær distribusjon
-   */
-  calculatePoints(cardId, minId, maxId) {
-    // If there's only one card or invalid IDs
-    if (minId === maxId || cardId === undefined || minId === undefined || maxId === undefined) {
-      return 33; // Default to max points
-    }
-    
-    // Normalize the ID (0 to 1 range, where 0 = minId and 1 = maxId)
-    const normalizedId = (cardId - minId) / (maxId - minId);
-    
-    // Non-linear distribution using a power function
-    // This will give more points to lower IDs with a non-linear curve
-    const pointsValue = 33 - (normalizedId * normalizedId * 25);
-    
-    // Round to nearest integer
-    return Math.round(pointsValue);
-  }
-  
-  /**
-   * Henter alle kort fra databasen
-   * @returns {Object} - Objekt med kort-array
-   */
-  async fetchAllCards() {
-    if (this.dataFetched) return { cards: this.cards };
-    
-    if (!this.dbQueries) {
-      throw new Error("Database queries object is not available");
-    }
-    
-    // Fetch all category IDs
-    const categoryIds = await this.dbQueries.getAllCategoryIds();
-    
-    const fetchedCards = [];
-    
-    // Process each category ID
-    for (const categoryId of categoryIds) {
-      try {
-        const cardsData = await this.dbQueries.getCardById(categoryId);
-        const card = Card.fromRecords(cardsData);
-        
-        if (card) {
-          fetchedCards.push(card);
-        }
-      } catch (error) {
-        console.error(`Error fetching card for category ID ${categoryId}:`, error);
-      }
-    }
-    
-    // Find min and max IDs for point calculation
-    const cardIds = fetchedCards.map(card => card.id).filter(id => id !== null && !isNaN(id));
-    
-    let minId = 0;
-    let maxId = 0;
-    
-    if (cardIds.length > 0) {
-      minId = Math.min(...cardIds);
-      if (minId < 0) {
-        minId = 0;
-      }
-      maxId = Math.max(...cardIds);
-    }
-    
-    console.log("MinID:", minId);
-    console.log("MaxID:", maxId);
-    
-    // Calculate points for each card
-    fetchedCards.forEach(card => {
-      if (card.id !== null) {
-        card.points = this.calculatePoints(card.id, minId, maxId);
-      }
-    });
-    
-    this.cards = fetchedCards;
-    this.dataFetched = true;
-    
-    return { cards: this.cards };
-  }
-  
-  /**
-   * Nullstiller datahentingsstatus
-   */
-  resetFetchState() {
-    this.dataFetched = false;
-  }
-}
-
-// ------------------------------
-// PRESENTER/RENDERER
-// ------------------------------
-
-/**
- * Renderer-klasse for kort
- * Håndterer visning av kortets komponenter
+ * Card Renderer class
+ * Handles rendering of card components
  */
 class CardRenderer {
   /**
-   * Renderer tekst, med fallback hvis tom
+   * Renders text with fallback if empty
    */
   static renderText(text, fallback = '') {
     return text || fallback;
   }
   
   /**
-   * Renderer en egenskap (label-value par)
+   * Renders a property (label-value pair)
    */
   static renderProperty(label, value) {
     if (!value) return null;
@@ -283,10 +30,7 @@ class CardRenderer {
   }
   
   /**
-   * Renderer kategoriseksjonen
-   * Inneholder:
-   * - Kategorititel
-   * - Kategoribeskrivelse
+   * Renders the category section
    */
   static renderCategorySection(category) {
     if (!category) return null;
@@ -300,8 +44,7 @@ class CardRenderer {
   }
   
   /**
-   * Renderer poengdelene på kortet
-   * Poengverdi med fargekoding basert på nivå
+   * Renders the points section
    */
   static renderPointsSection(points) {
     if (points === undefined || points === null) return null;
@@ -322,8 +65,7 @@ class CardRenderer {
   }
   
   /**
-   * Renderer spørsmålseksjonen
-   * Inneholder spørsmålstekst
+   * Renders the question section
    */
   static renderQuestionSection(question) {
     if (!question) return null;
@@ -337,12 +79,7 @@ class CardRenderer {
   }
   
   /**
-   * Renderer alternativer
-   * For hvert alternativ vises:
-   * - Tekst
-   * - Beskrivelse
-   * - "Hva" informasjon
-   * - "Hvordan" informasjon
+   * Renders the alternatives section
    */
   static renderAlternativesSection(alternatives) {
     if (!alternatives || alternatives.length === 0) return null;
@@ -365,12 +102,7 @@ class CardRenderer {
   }
   
   /**
-   * Renderer et helt kort
-   * Struktur:
-   * - Header (ID og poeng)
-   * - Kategori
-   * - Spørsmål
-   * - Alternativer
+   * Renders a complete card
    */
   static renderCard(card, index) {
     const cardVariants = {
@@ -399,75 +131,17 @@ class CardRenderer {
   }
 }
 
-// ------------------------------
-// HOVEDKOMPONENT
-// ------------------------------
-
 /**
- * CardFactory-komponenten
- * Hovedkomponent som håndterer henting og visning av kort
+ * CardFactory component
+ * Uses the CardContext to fetch and display cards
  */
 const CardFactory = () => {
-  const [cards, setCards] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [cardService, setCardService] = useState(null);
-  
-  const { dbQueries, isConnected, isInitializing, connectionError } = useNeo4j();
-  
-  // Initialize card service
-  useEffect(() => {
-    if (dbQueries) {
-      setCardService(new CardDataService(dbQueries));
-    }
-  }, [dbQueries]);
-  
-  // Fetch data from Neo4j database
-  const fetchData = useCallback(async () => {
-    console.log("Neo4j connection status:", { isInitializing, isConnected, connectionError });
-    
-    if (isInitializing) return;
-    
-    if (!isConnected || connectionError) {
-      setError(`Database connection error: ${connectionError}`);
-      setLoading(false);
-      return;
-    }
-    
-    if (!cardService) {
-      setError("Card service is not available");
-      setLoading(false);
-      return;
-    }
-    
-    try {
-      setLoading(true);
-      
-      const { cards: fetchedCards } = await cardService.fetchAllCards();
-      
-      setCards(fetchedCards);
-      setError(null);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [cardService, isConnected, isInitializing, connectionError]);
-  
-  // Run fetchData when necessary
-  useEffect(() => {
-    if (cardService && isConnected && !isInitializing) {
-      fetchData();
-    }
-  }, [cardService, isConnected, isInitializing, fetchData]);
+  const { cards, loading, error, fetchCards, resetFetchState } = useCards();
   
   // Manual data refresh
   const refreshData = () => {
-    if (cardService) {
-      cardService.resetFetchState();
-      fetchData();
-    }
+    resetFetchState();
+    fetchCards(true);
   };
   
   // Main render

@@ -364,3 +364,44 @@
   background-color: #f8d7da;
   color: #721c24;
 }
+
+
+
+.question-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.info-button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--blue);
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 10px;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.info-button:hover {
+  background-color: var(--purple);
+}
+
+/* Animation for showing expanded information */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.question-explanation,
+.question-what,
+.question-how {
+  animation: fadeIn 0.2s ease-out;
+}

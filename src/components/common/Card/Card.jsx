@@ -1,9 +1,160 @@
-// src/components/common/Card/CardFactory.jsx
-import React from 'react';
-import { motion } from 'framer-motion';
+// src/components/common/Card/Card.jsx
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useCards } from '../../../context/CardContext';
 import { categoryIcons } from '../../../data/categories';
+import ModalPortal from '../ModalPortal/ModalPortal';
 import './Card.css';
+
+/**
+ * CategoryDetail component
+ * Displays detailed information about a category in a modal
+ */
+const CategoryDetail = ({ 
+  categoryData, 
+  onClose, 
+  answers,
+  updateAnswer,
+  completedCategories 
+}) => {
+  const [internalState, setInternalState] = useState({});
+  const categoryId = categoryData.id?.toString();
+
+  // Initialize internal state from answers
+  useEffect(() => {
+    if (categoryId && answers && answers[categoryId]) {
+      setInternalState(answers[categoryId]);
+    }
+  }, [categoryId, answers]);
+  
+  // For debugging
+  useEffect(() => {
+    console.log('CategoryDetail rendered with:', { 
+      categoryId, 
+      totalQuestions,
+      answeredQuestions,
+      alternatives: categoryData.alternatives?.length
+    });
+  }, [categoryId, categoryData, totalQuestions, answeredQuestions]);
+  
+  // Calculate status metrics
+  const totalQuestions = categoryData.alternatives?.length || 0;
+  const answeredQuestions = Object.keys(internalState).length;
+  const isComplete = completedCategories ? completedCategories.includes(categoryId) : false;
+  
+  // Create default handlers if not provided
+  const safeUpdateAnswer = (catId, qId, value) => {
+    if (updateAnswer) {
+      updateAnswer(catId, qId, value);
+    } else {
+      console.log('No updateAnswer function provided. Would update:', { catId, qId, value });
+      // Update internal state regardless
+      setInternalState(prev => ({
+        ...prev,
+        [qId]: value
+      }));
+    }
+  };
+  
+  // Handle answer changes
+  const handleAnswerChange = (questionId, value) => {
+    console.log('Changing answer:', questionId, value);
+    
+    // Update internal state
+    setInternalState(prev => {
+      const newState = {
+        ...prev,
+        [questionId]: value
+      };
+      console.log('New internal state:', newState);
+      return newState;
+    });
+    
+    // Update context state using the safe function
+    safeUpdateAnswer(categoryId, questionId, value);
+  };
+  
+  const handleStopPropagation = (e) => {
+    if (e) e.stopPropagation();
+  };
+  
+  // Find appropriate icon
+  const icon = categoryIcons[Object.keys(categoryIcons)[Math.floor(Math.random() * Object.keys(categoryIcons).length)]];
+
+  return (
+    <ModalPortal>
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="detail-container" onClick={handleStopPropagation}>
+          <div className="detail-header">
+            <div className="header-content">
+              {icon && <div className="icon-container-modal">{icon}</div>}
+              <h2 className="modal-title">{categoryData.category?.text || "Unnamed Category"}</h2>
+            </div>
+            <button className="close-button" onClick={onClose}>×</button>
+          </div>
+          
+          <p className="modal-description">{categoryData.category?.description || ""}</p>
+          
+          <div className="questions-container">
+            <div className="questions-header">
+              <h3 className="questions-title">Alternativer</h3>
+              <div className="questions-status">
+                {answeredQuestions} av {totalQuestions} besvart
+              </div>
+            </div>
+            
+            {categoryData.alternatives && categoryData.alternatives.length > 0 ? (
+              categoryData.alternatives.map((alt, index) => {
+                const questionId = `${categoryId}_q${index}`;
+                return (
+                  <div key={questionId} className="neo4j-question">
+                    <div className="question-text">{alt.text || `Alternative ${index + 1}`}</div>
+                    <div className="question-check">
+                      <label className="checkbox-container">
+                        <input 
+                          type="checkbox" 
+                          checked={internalState[questionId] === true}
+                          onChange={(e) => handleAnswerChange(questionId, e.target.checked)}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                    </div>
+                    {alt.description && (
+                      <div className="question-explanation">
+                        <strong>Beskrivelse:</strong> {alt.description}
+                      </div>
+                    )}
+                    {alt.what && (
+                      <div className="question-what">
+                        <strong>Hva:</strong> {alt.what}
+                      </div>
+                    )}
+                    {alt.how && (
+                      <div className="question-how">
+                        <strong>Hvordan:</strong> {alt.how}
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <div className="no-questions-message">
+                Ingen alternativer er tilgjengelig for denne kategorien ennå.
+              </div>
+            )}
+          </div>
+          
+          <div className="close-button-container">
+            <div className={`category-status ${isComplete ? 'complete' : ''}`}>
+              {isComplete ? 'Kategori fullført' : `${answeredQuestions} av ${totalQuestions} alternativer besvart`}
+            </div>
+            <button className="action-button primary" onClick={onClose}>Lukk kategori</button>
+          </div>
+        </div>
+      </div>
+    </ModalPortal>
+  );
+};
 
 /**
  * Card Renderer class
@@ -170,7 +321,7 @@ class CardRenderer {
             {card.category?.description || "No description available"}
           </p>
           {status && (
-            <div className="status-indicator">
+            <div className={`status-indicator ${isComplete ? 'complete' : ''}`}>
               {status.answered}/{status.total} besvart
             </div>
           )}
@@ -185,20 +336,86 @@ class CardRenderer {
  * Uses the CardContext to fetch and display cards
  * 
  * @param {Object} props
- * @param {string} props.mode - 'standard' or 'assessment'
+ * @param {string} props.mode - 'standard', 'assessment', or 'results'
  * @param {Function} props.onCardClick - Called when a card is clicked (assessment mode)
  * @param {Function} props.getCategoryStatus - Function to get status for a category (assessment mode)
  * @param {Array} props.completedCategories - List of completed category IDs (assessment mode)
+ * @param {Object} props.answers - Current answers state (for CategoryDetail modal)
+ * @param {Function} props.updateAnswer - Function to update answers (for CategoryDetail modal)
  */
 const CardFactory = ({ 
-  mode = 'standard',
+  mode = 'standard', // 'standard', 'assessment', or 'results'
   onCardClick,
   getCategoryStatus,
   completedCategories,
+  answers = {},
+  updateAnswer,
   className = ''
 }) => {
   const { cards, loading, error, fetchCards, resetFetchState } = useCards();
+  const [selectedCategoryData, setSelectedCategoryData] = useState(null);
+  const [internalAnswers, setInternalAnswers] = useState({});
   
+  // If no external getCategoryStatus is provided, create a default one
+  const defaultGetCategoryStatus = (categoryId) => {
+    const card = cards.find(c => c.id?.toString() === categoryId);
+    if (!card) return { total: 0, answered: 0, fulfilled: 0 };
+    
+    const alternatives = card.alternatives || [];
+    const categoryAnswers = answers[categoryId] || internalAnswers[categoryId] || {};
+    const answeredQuestions = Object.keys(categoryAnswers).length;
+    
+    return {
+      total: alternatives.length,
+      answered: answeredQuestions,
+      fulfilled: answeredQuestions
+    };
+  };
+  
+  // Use provided getCategoryStatus or fallback to default
+  const getStatusFn = getCategoryStatus || defaultGetCategoryStatus;
+  
+  // Internal update answer function if none is provided
+  const internalUpdateAnswer = (categoryId, questionId, value) => {
+    console.log('Internal update:', categoryId, questionId, value);
+    setInternalAnswers(prev => ({
+      ...prev,
+      [categoryId]: {
+        ...(prev[categoryId] || {}),
+        [questionId]: value
+      }
+    }));
+  };
+  
+  // Calculate internal completed categories if none provided
+  const internalCompletedCategories = Object.keys(internalAnswers).filter(categoryId => {
+    const card = cards.find(c => c.id?.toString() === categoryId);
+    if (!card) return false;
+    
+    const totalAlternatives = card.alternatives?.length || 0;
+    const answeredQuestions = Object.keys(internalAnswers[categoryId] || {}).length;
+    
+    return answeredQuestions === totalAlternatives;
+  });
+
+  // Custom card click handler that opens the modal
+  const handleCardClick = (card) => {
+    // Always open the modal in assessment or results mode
+    if (mode === 'assessment' || mode === 'results') {
+      setSelectedCategoryData(card);
+    }
+    
+    // Also call the parent's handler if provided (for backward compatibility)
+    if (onCardClick) {
+      onCardClick(card);
+    }
+  };
+  
+  // Close modal handler
+  const handleCloseDetail = () => {
+    setSelectedCategoryData(null);
+  };
+
   // Manual data refresh
   const refreshData = () => {
     resetFetchState();
@@ -241,13 +458,27 @@ const CardFactory = ({
             {cards.map((card, index) => 
               mode === 'assessment' 
                 ? CardRenderer.renderAssessmentCard(card, index, {
-                    onCardClick,
-                    getCategoryStatus,
-                    completedCategories
+                    onCardClick: () => handleCardClick(card),
+                    getCategoryStatus: getStatusFn,
+                    completedCategories: completedCategories || []
                   }) 
                 : CardRenderer.renderStandardCard(card, index)
             )}
           </div>
+          
+          {/* Category Detail Modal */}
+          <AnimatePresence>
+            {selectedCategoryData && (mode === 'assessment' || mode === 'results') && (
+              <CategoryDetail 
+                categoryData={selectedCategoryData}
+                onClose={handleCloseDetail}
+                answers={answers || internalAnswers}
+                updateAnswer={updateAnswer || internalUpdateAnswer}
+                completedCategories={completedCategories || internalCompletedCategories || []}
+                mode={mode}
+              />
+            )}
+          </AnimatePresence>
         </>
       ) : (
         <div className="empty-container">

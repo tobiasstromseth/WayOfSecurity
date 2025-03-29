@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNeo4j } from '../../../context/Neo4jContext';
 import CardFactory from './CardFactory';
-import './CardContainer.css';
 
 const CardContainer = () => {
   

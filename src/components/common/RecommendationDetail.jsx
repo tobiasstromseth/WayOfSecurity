@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { categories, categoryIcons } from '../../data/categories';
 import { recommendations } from '../../data/questions';
-import ModalPortal from './ModalPortal';
+import ModalPortal from './ModalPortal/ModalPortal';
 
 const Overlay = styled(motion.div)`
   position: fixed;

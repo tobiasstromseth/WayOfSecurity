@@ -1,19 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
+import './ModalPortal.css';
 
-const ModalPortal = ({ children }) => {
-  // Bruk en ref for å lagre div-elementet, slik at det ikke skapes på nytt ved hver render
+const ModalPortal = ({ children, animated = true }) => {
+  // Bruk en ref for å lagre div-elementet
   const elRef = useRef(null);
   
   // Opprett div-elementet kun én gang
   if (elRef.current === null) {
     const div = document.createElement('div');
-    div.style.position = 'fixed';
-    div.style.zIndex = '9998';
-    div.style.top = '0';
-    div.style.left = '0';
-    div.style.width = '100vw';
-    div.style.height = '100vh';
+    div.className = 'modal-portal-container';
     elRef.current = div;
   }
   
@@ -25,17 +21,24 @@ const ModalPortal = ({ children }) => {
     document.body.appendChild(el);
     
     // Add a class to the body to prevent scrolling
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
     
     // Cleanup function
     return () => {
       document.body.removeChild(el);
-      document.body.style.overflow = 'auto';
+      document.body.classList.remove('modal-open');
     };
-  }, []); // Tomt avhengighetsarray betyr at dette kjøres kun ved første rendering
+  }, []);
+  
+  // Wrap children with the overlay div that has styling
+  const wrappedChildren = (
+    <div className={`modal-overlay ${animated ? 'modal-overlay-animated' : ''}`}>
+      {children}
+    </div>
+  );
   
   // Render the children into the portal
-  return ReactDOM.createPortal(children, elRef.current);
+  return ReactDOM.createPortal(wrappedChildren, elRef.current);
 };
 
 export default ModalPortal;

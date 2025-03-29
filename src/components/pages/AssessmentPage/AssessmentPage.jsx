@@ -7,7 +7,7 @@ import Header from '../../common/Header/Header';
 import Background from '../../common/SpritesLoader/BackgroundSprites';
 import { useNeo4j } from '../../../context/Neo4jContext';
 import './AssessmentPage.css';
-import ModalPortal from '../../common/ModalPortal';
+import ModalPortal from '../../common/ModalPortal/ModalPortal';
 import Question from '../../common/Question';
 import styled from 'styled-components';
 

@@ -9,7 +9,7 @@ import StartPage from "./components/pages/StartPage/StartPage";
 import AssessmentPage from "./components/pages/AssessmentPage/AssessmentPage";
 import ResultsPage from "./components/pages/ResultsPage/ResultsPage";
 import TestCards from "./components/pages/TestCards/TestCards";
-import DatabaseStatus from "./components/common/DatabaseStatus";
+import DatabaseStatus from "./components/common/DatabaseStatus/DatabaseStatus";
 import "./styles/global.css";
 
 function App() {

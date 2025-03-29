@@ -1,0 +1,155 @@
+/* Overlay styles */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: auto;
+  }
+  
+  /* Detail container styles */
+  .detail-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Header styles */
+  .detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+  
+  /* Content container */
+  .content-container {
+    padding: 1rem;
+    flex: 1;
+  }
+  
+  /* Icon container */
+  .icon-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+  }
+  
+  /* Score display */
+  .score-display {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .score-text {
+    margin-right: 0.5rem;
+    font-weight: bold;
+  }
+  
+  .score-bar {
+    flex: 1;
+    height: 12px;
+    background-color: #eee;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 0 0.5rem;
+  }
+  
+  .score-fill {
+    height: 100%;
+    background-color: #4caf50;
+    border-radius: 6px;
+  }
+  
+  /* Description */
+  .description {
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+  
+  /* Recommendations list */
+  .recommendations-list {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  /* Recommendation styles */
+  .recommendation-item {
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+  
+  .recommendation-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .recommendation-detail {
+    margin-left: 1rem;
+    margin-top: 0.25rem;
+    color: #555;
+  }
+  
+  .recommendation-label {
+    font-style: italic;
+    margin-right: 0.5rem;
+  }
+  
+  /* Close button container */
+  .close-button-container {
+    padding: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #eee;
+  }
+  
+  .action-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .action-button:hover {
+    background-color: #0056b3;
+  }

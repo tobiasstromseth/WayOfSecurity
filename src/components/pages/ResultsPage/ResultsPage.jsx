@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AssessmentContext } from '../../../context/AssessmentContext';
 import { categories } from '../../../data/categories';
 import { categoryIcons } from '../../../data/categories';
-import RecommendationDetail from '../../common/RecommendationDetail';
+import RecommendationDetail from '../../common/RecommendationDetail/RecommendationDetail';
 import Header from '../../common/Header/Header';
 import './ResultsPage.css';
 
